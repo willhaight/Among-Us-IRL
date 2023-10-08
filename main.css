@@ -1,4 +1,44 @@
-body {
+body,
+.home-field {
     color: white;
     background-color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.home-field {
+    border: 1px solid white;
+    width: 70%;
+    padding-bottom: 10%;
+    padding-top: 10%;
+}
+
+.home-button {
+    color: white;
+    background-color: black;
+    border: 1px solid white;
+    border-radius: 30%;
+    width: 15%;
+    margin-left: 5%;
+    margin-right: 5%;
+    padding: 5% 15% 5% 15%;
+    display: flex;
+    justify-content: center;
+}
+
+.controls,
+.sub-controls {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.top-heading {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
 }
