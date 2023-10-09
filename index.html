@@ -12,16 +12,49 @@
     <div class="home-field" id="home-field">
         <div class="top-heading">
             <p>Version Alpha</p>
-            <p>logged out</p>
+            <p id="userName">logged out</p>
         </div>
         <h1>Among Us</h1>
-        <div class="controls">
+        <div class="home-controls" id="home-controls">
             <input type="button" value="Login" class="home-button" id="loginButt">
             <input type="button" value="Play" class="home-button" id="playButt">
         </div>
+        <div class="login-controls" id="login-controls">
+            <div class="sub-controls">
+                <input type="text" placeholder="Email" class="home-input" id="email-input">
+                <input type="password" placeholder="Password" class="home-input" id="password-input">
+            </div>
+            <div class="sub-controls">
+                <input type="button" value="Submit" class="home-button" id="logSub">
+            </div>
+            <div class="sub-controls">
+                <input type="button" value="Forgot Password" class="home-button" id="forgotPass">
+                <input type="button" value="New User" class="home-button" id="signUpButt">
+            </div>
+        </div>
+        <div class="sign-up-controls" id="sign-up-controls">
+            <div class="sub-controls">
+                <input type="text" placeholder="Email" class="home-input" id="newAccEmail">
+                <input type="text" placeholder="Display Name" class="home-input" id="display-name">
+                <input type="password" placeholder="Password" class="home-input" id="newAccPass1">
+                <p>Confirm Password</p>
+                <input type="password" placeholder="Password" class="home-input" id="newAccPass2">
+            </div>
+            <div class="sub-controls">
+                <input type="button" value="Submit" class="home-button" id="newAccSub">
+            </div>
+            <div class="sub-controls">
+                <input type="button" value="Back" class="home-button" id="homeButt">
+            </div>
+        </div>
+        <div class="error-field" id="error-field"></div>
     </div>
 </body>
-<script src="brain.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script type="module" src="brain.js"></script>
 <script src="screenShift.js"></script>
+
 
 </html>

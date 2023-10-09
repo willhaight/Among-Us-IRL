@@ -21,24 +21,56 @@ body,
     background-color: black;
     border: 1px solid white;
     border-radius: 30%;
-    width: 15%;
+    min-width: 15%;
     margin-left: 5%;
     margin-right: 5%;
     padding: 5% 15% 5% 15%;
     display: flex;
     justify-content: center;
+    text-align: center;
 }
 
-.controls,
+.home-input {
+    color: white;
+    background-color: black;
+    border: 1px solid white;
+    border-radius: 30%;
+    min-width: 15%;
+    margin-left: 5%;
+    margin-right: 5%;
+    padding: 5% 0% 5% 0%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.home-controls,
 .sub-controls {
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 .top-heading {
     width: 100%;
     display: flex;
     justify-content: space-around;
+}
+
+.login-controls,
+.sign-up-controls {
+    display: flex;
+    flex-direction: column;
+}
+
+.sign-up-controls .sub-controls {
+    display: flex;
+    flex-direction: column;
+}
+
+.error-field {
+    color: red;
 }
