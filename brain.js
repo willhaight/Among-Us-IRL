@@ -27,9 +27,8 @@ function addCollection(collName, data) {
 function loadUsers() {
     db.collection("among-us-data").get()
         .then(function (querySnapshot) {
-            console.log(querySnapshot)
             querySnapshot.forEach(function (doc) {
-                console.log(doc.id, " => ", doc.data());
+                console.log('play tested');
                 let counter = 0
                 doc.data().names.forEach(function () {
                     document.getElementById("nameList").innerHTML += `<p>${doc.data().names[counter]}</p>`
@@ -47,13 +46,29 @@ function addUser(newName) {
         names: firebase.firestore.FieldValue.arrayUnion(newName)
     })
         .then(function () {
-            console.log("Document successfully updated!");
+            loadUsers()
         })
         .catch(function (error) {
             console.error("Error updating document: ", error);
         })
 }
 
+function leaveLobby(user) {
+    console.log(user)
+    db.collection("among-us-data").doc("users").update({
+        names: firebase.firestore.FieldValue.arrayRemove(user)
+    })
+        .then(function () {
+            console.log("Document successfully updated!");
+            document.getElementById('nameList').innerHTML = ""
+            document.getElementById("createfield").style.display = "none"
+            document.getElementById('home-field').style.display = "flex"
+            loadUsers()
+        })
+        .catch(function (error) {
+            console.error("Error updating document: ", error);
+        });
+}
 
 
 //inputs
@@ -140,6 +155,7 @@ function signIn(user) {
 document.getElementById('userName').onclick = function () {
     firebase.auth().signOut()
     document.getElementById('userName').innerText = 'logged out';
+    leaveLobby(myUser)
     myUser = ""
 }
 document.getElementById('userName2').onclick = function () {
@@ -148,6 +164,7 @@ document.getElementById('userName2').onclick = function () {
     document.getElementById('userName').innerText = 'logged out';
     document.getElementById('home-field').style.display = "flex"
     document.getElementById('createfield').style.display = "none"
+    leaveLobby(myUser)
     myUser = ""
 }
 
@@ -181,9 +198,35 @@ forgotPass.onclick = function () {
 }
 
 document.getElementById('playButt').onclick = function () {
-    console.log("play button clicked")
+    addUser(myUser)
     document.getElementById("createfield").style.display = "flex"
     document.getElementById('home-field').style.display = "none"
-    addUser(myUser)
-    loadUsers()
+    document.getElementById('nameList').innerHTML = ""
 }
+
+document.getElementById('leaveLobby').onclick = function () {
+    leaveLobby(myUser)
+}
+
+document.getElementById('deleteLobby').onclick = function () {
+    db.collection("among-us-data").doc("users").update({
+        names: []
+    }).then(function () {
+        document.getElementById('nameList').innerHTML = ""
+        document.getElementById("createfield").style.display = "none"
+        document.getElementById('home-field').style.display = "flex"
+        loadUsers()
+    })
+}
+
+db.collection('among-us-data').doc('users').get().then(function (doc) {
+    let listedUsers = doc.data().names
+    console.log(listedUsers.length)
+    for (i = 0; i < listedUsers.length; i++) {
+        if (myUser == doc.data().names[i]) {
+            loadUsers()
+            document.getElementById("createfield").style.display = "flex"
+            document.getElementById('home-field').style.display = "none"
+        }
+    }
+})

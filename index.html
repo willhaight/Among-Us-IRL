@@ -12,7 +12,7 @@
     <div class="home-field" id="home-field">
         <div class="top-heading">
             <p>Version Alpha</p>
-            <p id="userName">logged out</p>
+            <p id="userName" class="userName">logged out</p>
         </div>
         <h1>Among Us</h1>
         <div class="home-controls" id="home-controls">
@@ -59,17 +59,21 @@
     <div class="createfield" id="createfield">
         <div class="top-heading">
             <p>Version Alpha</p>
-            <p id="userName2">logged out</p>
+            <p id="userName2" class="userName">logged out</p>
         </div>
         <div class="nameList" id="nameList"></div>
-        <div class="gameSettings" id="gameSettings"></div>
+        <div class="gameSettings" id="gameSettings">
+            <input type="button" value="Leave" class="home-button" id="leaveLobby">
+            <input type="button" value="Recreate" class="home-button" id="deleteLobby">
+        </div>
+    </div>
     </div>
 </body>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script type="module" src="brain.js"></script>
-<script src="screenShift.js"></script>
+<script src="brain.js"></script>
+<script type="module" src="screenShift.js"></script>
 
 
 </html>
