@@ -9,12 +9,22 @@ body,
     height: 100%;
 }
 
-.home-field {
+.home-field,
+.createfield {
     border: 1px solid white;
     width: 70%;
     padding-bottom: 10%;
     padding-top: 10%;
+    background-image: url('stars.jpeg');
+    background-repeat: none;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+
 }
+
 
 .home-button {
     color: white;
@@ -61,7 +71,8 @@ body,
 }
 
 .login-controls,
-.sign-up-controls {
+.sign-up-controls,
+.active-game-controls {
     display: flex;
     flex-direction: column;
 }
@@ -73,4 +84,28 @@ body,
 
 .error-field {
     color: red;
+}
+
+.game-creation-controls {
+    display: flex;
+}
+
+.game-creation-controls .home-button {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em 2em 1em 2em;
+}
+
+.nameList {
+    width: 70%;
+    min-height: 100px;
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }

@@ -11,17 +11,61 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+//function
+function addCollection(collName, data) {
+    db.collection(collName).add(data)
+        .then(function (docRef) {
+            console.log("Document written with ID: ", docRef.id);
+        })
+        .catch(function (error) {
+            console.error("Error adding document: ", error);
+        });
+}
+
+function loadUsers() {
+    db.collection("among-us-data").get()
+        .then(function (querySnapshot) {
+            console.log(querySnapshot)
+            querySnapshot.forEach(function (doc) {
+                console.log(doc.id, " => ", doc.data());
+                let counter = 0
+                doc.data().names.forEach(function () {
+                    document.getElementById("nameList").innerHTML += `<p>${doc.data().names[counter]}</p>`
+                    counter++
+                })
+            });
+        })
+        .catch(function (error) {
+            console.log("Error getting documents: ", error);
+        });
+}
+
+function addUser(newName) {
+    db.collection("among-us-data").doc('users').update({
+        names: firebase.firestore.FieldValue.arrayUnion(newName)
+    })
+        .then(function () {
+            console.log("Document successfully updated!");
+        })
+        .catch(function (error) {
+            console.error("Error updating document: ", error);
+        })
+}
+
 
 
 //inputs
 let newEmail = document.getElementById('newAccEmail')
 let newPass1 = document.getElementById('newAccPass1')
 let newPass2 = document.getElementById('newAccPass2')
-let newAccSub = document.getElementById('newAccSub')
 let newDisplayName = document.getElementById('display-name')
-let logSub = document.getElementById('logSub')
 let email = document.getElementById('email-input')
 let password = document.getElementById('password-input')
+//buttons
+let newAccSub = document.getElementById('newAccSub')
+let logSub = document.getElementById('logSub')
 let forgotPass = document.getElementById('forgotPass')
 //fields
 let errorField = document.getElementById('error-field')
@@ -70,26 +114,41 @@ newAccSub.onclick = function () {
     }
 }
 
+let myUser = ""
+
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
         // User is signed in
+        myUser = user.displayName
         document.getElementById('loginButt').style.display = 'none'
+        document.getElementById('playButt').style.display = 'flex'
         signIn(user);
     } else {
         // No user is signed in
         console.log('No user signed in.');
         document.getElementById('loginButt').style.display = 'flex'
+        document.getElementById('playButt').style.display = 'none'
     }
 });
 
 function signIn(user) {
     document.getElementById('userName').innerText = user.displayName;
+    document.getElementById('userName2').innerText = user.displayName;
     errorField.innerHTML = ""
 }
 //sign out
 document.getElementById('userName').onclick = function () {
     firebase.auth().signOut()
     document.getElementById('userName').innerText = 'logged out';
+    myUser = ""
+}
+document.getElementById('userName2').onclick = function () {
+    firebase.auth().signOut()
+    document.getElementById('userName2').innerText = 'logged out';
+    document.getElementById('userName').innerText = 'logged out';
+    document.getElementById('home-field').style.display = "flex"
+    document.getElementById('createfield').style.display = "none"
+    myUser = ""
 }
 
 //regular login
@@ -119,4 +178,12 @@ logSub.onclick = function () {
 forgotPass.onclick = function () {
     errorField.innerHTML = `
     <p class="error-message">Please contact Will about resetting your password</p>`
+}
+
+document.getElementById('playButt').onclick = function () {
+    console.log("play button clicked")
+    document.getElementById("createfield").style.display = "flex"
+    document.getElementById('home-field').style.display = "none"
+    addUser(myUser)
+    loadUsers()
 }
