@@ -25,19 +25,34 @@ function addCollection(collName, data) {
 }
 
 function loadUsers() {
-    db.collection("among-us-data").get()
-        .then(function (querySnapshot) {
-            querySnapshot.forEach(function (doc) {
-                console.log('play tested');
-                let counter = 0
-                doc.data().names.forEach(function () {
-                    document.getElementById("nameList").innerHTML += `<p>${doc.data().names[counter]}</p>`
-                    counter++
-                })
-            });
+    db.collection("among-us-data").doc('users').get()
+        .then(function (doc) {
+            if (doc.exists) {
+                console.log('Document data:', doc.data());
+                let counter = 0;
+                document.getElementById('nameList').innerHTML = ''
+                doc.data().names.forEach(function (name) {
+                    document.getElementById("nameList").innerHTML += `<p>${name}</p>`;
+                    gameRoleSetting[10].players = doc.data().names.length
+                    document.getElementById('playerCount').innerText = gameRoleSetting[10].players
+                    document.getElementById('sniperCount').innerText = gameRoleSetting[0].snipers
+                    document.getElementById('swapperCount').innerText = gameRoleSetting[1].swappers
+                    document.getElementById('killCooldown').innerText = gameRoleSetting[2].killCooldown
+                    document.getElementById('detectiveCount').innerText = gameRoleSetting[4].detectives
+                    document.getElementById('detectiveChecks').innerText = gameRoleSetting[5].detectiveChecks
+                    document.getElementById('priestCount').innerText = gameRoleSetting[6].priests
+                    document.getElementById('priestChecks').innerText = gameRoleSetting[7].priestChecks
+                    document.getElementById('engineerCount').innerText = gameRoleSetting[8].engineers
+                    document.getElementById('jesterCount').innerText = gameRoleSetting[9].jesters
+                    document.getElementById('taskCount').innerText = gameRoleSetting[3].tasks
+                    counter++;
+                });
+            } else {
+                console.log("No such document!");
+            }
         })
         .catch(function (error) {
-            console.log("Error getting documents: ", error);
+            console.log("Error getting document:", error);
         });
 }
 
@@ -165,6 +180,7 @@ document.getElementById('userName2').onclick = function () {
     document.getElementById('home-field').style.display = "flex"
     document.getElementById('createfield').style.display = "none"
     leaveLobby(myUser)
+    console.log(myUser)
     myUser = ""
 }
 
@@ -230,3 +246,255 @@ db.collection('among-us-data').doc('users').get().then(function (doc) {
         }
     }
 })
+
+let gameRoleSetting = [
+    { snipers: 0 },
+    { swappers: 0 },
+    { killCooldown: 0 },
+    { tasks: 0 },
+    { detectives: 0 },
+    { detectiveChecks: 0 },
+    { priests: 0 },
+    { priestChecks: 0 },
+    { engineers: 0 },
+    { jesters: 0 },
+    { players: 0 }
+]
+db.collection("among-us-data").doc("gameSettings").get().then(function (doc) {
+    gameRoleSetting[3].tasks = doc.data().tasks
+    gameRoleSetting[4].detectives = doc.data().detectives
+    gameRoleSetting[5].detectiveChecks = doc.data().detectiveChecks
+    gameRoleSetting[6].priests = doc.data().priests
+    gameRoleSetting[7].priestChecks = doc.data().priestChecks
+    gameRoleSetting[8].engineers = doc.data().engineers
+    gameRoleSetting[0].snipers = doc.data().snipers
+    gameRoleSetting[1].swappers = doc.data().swappers
+    gameRoleSetting[2].killCooldown = doc.data().killCooldown
+    gameRoleSetting[9].jesters = doc.data().jesters
+})
+let gameButtonInputList = document.getElementsByClassName('minus-input')
+let gameButtonInputList2 = document.getElementsByClassName('plus-input')
+
+gameButtonInputList[0].onclick = function () {
+    gameRoleSetting[0].snipers += 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        snipers: gameRoleSetting[0].snipers
+    })
+    loadUsers()
+}
+gameButtonInputList[1].onclick = function () {
+    gameRoleSetting[1].swappers += 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        swappers: gameRoleSetting[1].swappers
+    })
+    loadUsers()
+}
+gameButtonInputList[2].onclick = function () {
+    gameRoleSetting[2].killCooldown += 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        killCooldown: gameRoleSetting[2].killCooldown
+    })
+    loadUsers()
+}
+gameButtonInputList[3].onclick = function () {
+    gameRoleSetting[3].tasks += 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        tasks: gameRoleSetting[3].tasks
+    })
+    loadUsers()
+}
+gameButtonInputList[4].onclick = function () {
+    gameRoleSetting[4].detectives += 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        detectives: gameRoleSetting[4].detectives
+    })
+    loadUsers()
+}
+gameButtonInputList[5].onclick = function () {
+    gameRoleSetting[5].detectiveChecks += 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        detectiveChecks: gameRoleSetting[5].detectiveChecks
+    })
+    loadUsers()
+}
+gameButtonInputList[6].onclick = function () {
+    gameRoleSetting[6].priests += 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        priests: gameRoleSetting[6].priests
+    })
+    loadUsers()
+}
+gameButtonInputList[7].onclick = function () {
+    gameRoleSetting[7].priestChecks += 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        priestChecks: gameRoleSetting[7].priestChecks
+    })
+    loadUsers()
+}
+gameButtonInputList[8].onclick = function () {
+    gameRoleSetting[8].engineers += 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        engineers: gameRoleSetting[8].engineers
+    })
+    loadUsers()
+}
+gameButtonInputList[9].onclick = function () {
+    gameRoleSetting[9].jesters += 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        jesters: gameRoleSetting[9].jesters
+    })
+    loadUsers()
+}
+// 
+// minus button
+// 
+
+gameButtonInputList2[0].onclick = function () {
+    gameRoleSetting[0].snipers -= 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        snipers: gameRoleSetting[0].snipers
+    })
+    loadUsers()
+}
+gameButtonInputList2[1].onclick = function () {
+    gameRoleSetting[1].swappers -= 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        swappers: gameRoleSetting[1].swappers
+    })
+    loadUsers()
+}
+gameButtonInputList2[2].onclick = function () {
+    gameRoleSetting[2].killCooldown -= 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        killCooldown: gameRoleSetting[2].killCooldown
+    })
+    loadUsers()
+}
+gameButtonInputList2[3].onclick = function () {
+    gameRoleSetting[3].tasks -= 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        tasks: gameRoleSetting[3].tasks
+    })
+    loadUsers()
+}
+gameButtonInputList2[4].onclick = function () {
+    gameRoleSetting[4].detectives -= 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        detectives: gameRoleSetting[4].detectives
+    })
+    loadUsers()
+}
+gameButtonInputList2[5].onclick = function () {
+    gameRoleSetting[5].detectiveChecks -= 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        detectiveChecks: gameRoleSetting[5].detectiveChecks
+    })
+    loadUsers()
+}
+gameButtonInputList2[6].onclick = function () {
+    gameRoleSetting[6].priests -= 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        priests: gameRoleSetting[6].priests
+    })
+    loadUsers()
+}
+gameButtonInputList2[7].onclick = function () {
+    gameRoleSetting[7].priestChecks -= 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        priestChecks: gameRoleSetting[7].priestChecks
+    })
+    loadUsers()
+}
+gameButtonInputList2[8].onclick = function () {
+    gameRoleSetting[8].engineers -= 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        engineers: gameRoleSetting[8].engineers
+    })
+    loadUsers()
+}
+gameButtonInputList2[9].onclick = function () {
+    gameRoleSetting[9].jesters -= 1
+    db.collection('among-us-data').doc('gameSettings').update({
+        jesters: gameRoleSetting[9].jesters
+    })
+    loadUsers()
+}
+
+//start game
+document.getElementById('startGame').onclick = function () {
+    if (gameRoleSetting[10].players >= gameRoleSetting[0].snipers +
+        gameRoleSetting[1].swappers + gameRoleSetting[4].detectives +
+        gameRoleSetting[6].priests + gameRoleSetting[8].engineers +
+        gameRoleSetting[9].jesters) {
+        console.log('Truthify')
+        document.getElementById('gameSettingErrorField').innerHTML = ""
+        document.getElementById('createfield').style.display = "none"
+        document.getElementById('inGameField').style.display = "flex"
+        scrambleRoles()
+    } else {
+        document.getElementById('gameSettingErrorField').innerHTML = "<p>Numbers dont match</p>"
+    }
+}
+
+db.collection('among-us-data').doc('users').onSnapshot(function (doc) {
+    loadUsers()
+})
+
+// in game content
+let playerRoles = []
+let userList = []
+let roleCirculation = []
+
+// let gameRoleSetting = [
+//    0 { snipers: 0 },
+//    1 { swappers: 0 },
+//    2 { killCooldown: 0 },
+//    3 { tasks: 0 },
+//    4 { detectives: 0 },
+//    5 { detectiveChecks: 0 },
+//    6 { priests: 0 },
+//    7 { priestChecks: 0 },
+//    8 { engineers: 0 },
+//    9 { jesters: 0 },
+//    10 { players: 0 }
+// ]
+function scrambleRoles() {
+    for (i = 0; i < gameRoleSetting[6].priests; i++) {
+        roleCirculation.push('doctor')
+    }
+    for (i = 0; i < gameRoleSetting[9].jesters; i++) {
+        roleCirculation.push('jester')
+    }
+    for (i = 0; i < gameRoleSetting[8].engineers; i++) {
+        roleCirculation.push('engineer')
+    }
+    for (i = 0; i < gameRoleSetting[4].detectives; i++) {
+        roleCirculation.push('detective')
+    }
+    for (i = 0; i < gameRoleSetting[0].snipers; i++) {
+        roleCirculation.push('sniper')
+    }
+    for (i = 0; i < gameRoleSetting[1].swappers; i++) {
+        roleCirculation.push('swapper')
+        console.log('swaper')
+    }
+    console.log(gameRoleSetting[10].players - roleCirculation.length, 'test')
+    for (i = 0; i < gameRoleSetting[10].players - roleCirculation.length; i++) {
+        roleCirculation.push('crewmate')
+        console.log('pushed')
+    }
+    console.log(roleCirculation)
+    for (i = 0; i < roleCirculation.length; i++) {
+        Math.floor(Math.random() * roleCirculation.length);
+        console.log(roleCirculation.splice(Math.floor(Math.random() * roleCirculation.length), 1))
+    }
+    db.collection('among-us-data').doc('users').get()
+        .then(function (doc) {
+            userList = doc.data()
+        })
+    console.log(roleCirculation)
+}
+
+function retrieveRole() {
+
+}

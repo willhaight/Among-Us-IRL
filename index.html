@@ -65,8 +65,85 @@
         <div class="gameSettings" id="gameSettings">
             <input type="button" value="Leave" class="home-button" id="leaveLobby">
             <input type="button" value="Recreate" class="home-button" id="deleteLobby">
+            <div class="gameInputs">
+                <div>
+                    <p class="gameInputDisplay">Player Count</p>
+                    <p id="playerCount" class="gameInputDisplay">0</p>
+                </div>
+            </div>
+            <!-- impastas -->
+            <p class="gameInputDisplay">Sniper Count</p>
+            <div class="gameInputs">
+                <div class="plus-input">-</div>
+                <p id="sniperCount" class="gameInputDisplay">0</p>
+                <div class="minus-input">+</div>
+            </div>
+            <p class="gameInputDisplay">Swapper Count</p>
+            <div class="gameInputs">
+                <div class="plus-input">-</div>
+                <p id="swapperCount" class="gameInputDisplay">0</p>
+                <div class="minus-input">+</div>
+            </div>
+            <p class="gameInputDisplay">Kill Cooldown</p>
+            <div class="gameInputs">
+                <div class="plus-input">-</div>
+                <p id="killCooldown" class="gameInputDisplay">0</p>
+                <div class="minus-input">+</div>
+            </div>
+            <!-- crew -->
+            <p class="gameInputDisplay">Task Count</p>
+            <div class="gameInputs">
+                <div class="plus-input">-</div>
+                <p id="taskCount" class="gameInputDisplay">0</p>
+                <div class="minus-input">+</div>
+            </div>
+            <p class="gameInputDisplay">Detective Count</p>
+            <div class="gameInputs">
+                <div class="plus-input">-</div>
+                <p id="detectiveCount" class="gameInputDisplay">0</p>
+                <div class="minus-input">+</div>
+            </div>
+            <p class="gameInputDisplay">Detective Checks</p>
+            <div class="gameInputs">
+                <div class="plus-input">-</div>
+                <p id="detectiveChecks" class="gameInputDisplay">0</p>
+                <div class="minus-input">+</div>
+            </div>
+            <p class="gameInputDisplay">Doctor Count</p>
+            <div class="gameInputs">
+                <div class="plus-input">-</div>
+                <p id="priestCount" class="gameInputDisplay">0</p>
+                <div class="minus-input">+</div>
+            </div>
+            <p class="gameInputDisplay">Task Types</p>
+            <div class="gameInputs">
+                <div class="plus-input">-</div>
+                <p id="priestChecks" class="gameInputDisplay">0</p>
+                <div class="minus-input">+</div>
+            </div>
+            <p class="gameInputDisplay">Engineer Count</p>
+            <div class="gameInputs">
+                <div class="plus-input">-</div>
+                <p id="engineerCount" class="gameInputDisplay">0</p>
+                <div class="minus-input">+</div>
+            </div>
+            <!-- 3rd party -->
+            <p class="gameInputDisplay">Jester Count</p>
+            <div class="gameInputs">
+                <div class="plus-input">-</div>
+                <p id="jesterCount" class="gameInputDisplay">0</p>
+                <div class="minus-input">+</div>
+            </div>
+            <input type="button" value="Start Game" class="home-button" id="startGame">
+            <div class="gameSettingErrorField" id="gameSettingErrorField"></div>
         </div>
     </div>
+    <div class="inGameField" id="inGameField">
+        <div class="player-info">
+            <h2 class="role">Role</h2>
+            <h2 class="name">Name</h2>
+        </div>
+        div.universalControls
     </div>
 </body>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>

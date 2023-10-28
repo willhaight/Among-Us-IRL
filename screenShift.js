@@ -17,7 +17,7 @@ loginControls.style.display = "none"
 signUpControls.style.display = "none"
 activeGame.style.display = "none"
 document.getElementById("createfield").style.display = "none"
-
+document.getElementById('inGameField').style.display = "none"
 
 //login button
 loginButt.onclick = function () {
