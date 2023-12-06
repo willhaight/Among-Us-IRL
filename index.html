@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Among us</title>
     <link href="main.css" rel="stylesheet">
+    <link rel="icon" href="among-us-astronaut-red.png" sizes="32x32">
+
 </head>
 
 <body>
@@ -78,7 +80,7 @@
                 <p id="sniperCount" class="gameInputDisplay">0</p>
                 <div class="minus-input">+</div>
             </div>
-            <p class="gameInputDisplay">Swapper Count</p>
+            <p class="gameInputDisplay">Assassin Count</p>
             <div class="gameInputs">
                 <div class="plus-input">-</div>
                 <p id="swapperCount" class="gameInputDisplay">0</p>
@@ -138,12 +140,27 @@
             <div class="gameSettingErrorField" id="gameSettingErrorField"></div>
         </div>
     </div>
+    <!-- ACTIVE GAME -->
     <div class="inGameField" id="inGameField">
         <div class="player-info">
-            <h2 class="role">Role</h2>
             <h2 class="name">Name</h2>
+            <h2 class="role">Role</h2>
+            <input type="button" value="Reset" class="home-button" id="leaveLobby2">
         </div>
-        div.universalControls
+        <div class="universalControls">
+            <div class="role-button"></div>
+            <div class="report-button"></div>
+            <div class="emergency-meeting-button"></div>
+        </div>
+        <div class="imposter-controls"></div>
+        <div class="detective-controls"></div>
+        <div class="engineer-controls"></div>
+        <div class="doctor-controls"></div>
+        <div class="sab-alert"></div>
+        <div class="report-alert"></div>
+        <div class="emergency-alert"></div>
+        <div class="game-won-alert"></div>
+        <div class="game-lost-alert"></div>
     </div>
 </body>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>

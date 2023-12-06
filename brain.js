@@ -233,11 +233,21 @@ document.getElementById('deleteLobby').onclick = function () {
         document.getElementById('home-field').style.display = "flex"
         loadUsers()
     })
+    db.collection("among-us-data").doc('activeGameRoleData').update({
+        nameRoles: ''
+    })
+}
+
+document.getElementById("leaveLobby2").onclick = function () {
+    db.collection("among-us-data").doc('activeGameRoleData').update({
+        nameRoles: ''
+    })
+    retrieveRole()
+
 }
 
 db.collection('among-us-data').doc('users').get().then(function (doc) {
     let listedUsers = doc.data().names
-    console.log(listedUsers.length)
     for (i = 0; i < listedUsers.length; i++) {
         if (myUser == doc.data().names[i]) {
             loadUsers()
@@ -426,7 +436,6 @@ document.getElementById('startGame').onclick = function () {
         gameRoleSetting[1].swappers + gameRoleSetting[4].detectives +
         gameRoleSetting[6].priests + gameRoleSetting[8].engineers +
         gameRoleSetting[9].jesters) {
-        console.log('Truthify')
         document.getElementById('gameSettingErrorField').innerHTML = ""
         document.getElementById('createfield').style.display = "none"
         document.getElementById('inGameField').style.display = "flex"
@@ -459,42 +468,116 @@ let roleCirculation = []
 //    10 { players: 0 }
 // ]
 function scrambleRoles() {
-    for (i = 0; i < gameRoleSetting[6].priests; i++) {
-        roleCirculation.push('doctor')
-    }
-    for (i = 0; i < gameRoleSetting[9].jesters; i++) {
-        roleCirculation.push('jester')
-    }
-    for (i = 0; i < gameRoleSetting[8].engineers; i++) {
-        roleCirculation.push('engineer')
-    }
-    for (i = 0; i < gameRoleSetting[4].detectives; i++) {
-        roleCirculation.push('detective')
-    }
-    for (i = 0; i < gameRoleSetting[0].snipers; i++) {
-        roleCirculation.push('sniper')
-    }
-    for (i = 0; i < gameRoleSetting[1].swappers; i++) {
-        roleCirculation.push('swapper')
-        console.log('swaper')
-    }
-    console.log(gameRoleSetting[10].players - roleCirculation.length, 'test')
-    for (i = 0; i < gameRoleSetting[10].players - roleCirculation.length; i++) {
-        roleCirculation.push('crewmate')
-        console.log('pushed')
-    }
-    console.log(roleCirculation)
-    for (i = 0; i < roleCirculation.length; i++) {
-        Math.floor(Math.random() * roleCirculation.length);
-        console.log(roleCirculation.splice(Math.floor(Math.random() * roleCirculation.length), 1))
-    }
     db.collection('among-us-data').doc('users').get()
         .then(function (doc) {
-            userList = doc.data()
-        })
-    console.log(roleCirculation)
+            userList = doc.data();
+            let roleCirculationCopy = [...roleCirculation];
+            for (let i = 0; i < gameRoleSetting[6].priests; i++) {
+                roleCirculationCopy.push('doctor');
+            }
+            for (let i = 0; i < gameRoleSetting[9].jesters; i++) {
+                roleCirculationCopy.push('jester');
+            }
+            for (let i = 0; i < gameRoleSetting[8].engineers; i++) {
+                roleCirculationCopy.push('engineer');
+            }
+            for (let i = 0; i < gameRoleSetting[4].detectives; i++) {
+                roleCirculationCopy.push('detective');
+            }
+            for (let i = 0; i < gameRoleSetting[0].snipers; i++) {
+                roleCirculationCopy.push('sniper');
+            }
+            for (let i = 0; i < gameRoleSetting[1].swappers; i++) {
+                roleCirculationCopy.push('swapper');
+            }
+            let escapedCounter = roleCirculationCopy.length;
+            for (let i = 0; i < gameRoleSetting[10].players - escapedCounter; i++) {
+                roleCirculationCopy.push('crewmate');
+            }
+            escapedCounter = roleCirculationCopy.length;
+
+            for (let i = 0; i < escapedCounter; i++) {
+                let randomRoleIndex = Math.floor(Math.random() * roleCirculationCopy.length);
+                let randomRole = roleCirculationCopy.splice(randomRoleIndex, 1)[0];
+                let playerName = userList.names[i];
+                let playerRole = {};
+                playerRole[randomRole] = playerName;
+                playerRoles.push(playerRole);
+            }
+            console.log(playerRoles);
+            db.collection("among-us-data").doc('activeGameRoleData').update({
+                nameRoles: playerRoles
+            });
+        });
 }
 
+let roleAssignedList = []
 function retrieveRole() {
-
+    db.collection("among-us-data").doc("activeGameRoleData").get().then(function (doc) {
+        roleAssignedList = doc.data().nameRoles
+        if (roleAssignedList == "") {
+            document.getElementById('gameSettingErrorField').innerHTML = ""
+            document.getElementById('createfield').style.display = "flex"
+            document.getElementById('inGameField').style.display = "none"
+        }
+        try {
+            for (i = 0; i < roleAssignedList.length; i++) {
+                if (roleAssignedList[i].crewmate == myUser) {
+                    document.getElementsByClassName("name")[0].innerText = `${myUser}`
+                    document.getElementsByClassName("role")[0].innerText = `Crewmate`
+                    document.getElementById('gameSettingErrorField').innerHTML = ""
+                    document.getElementById('createfield').style.display = "none"
+                    document.getElementById('inGameField').style.display = "flex"
+                }
+                else if (roleAssignedList[i].sniper == myUser) {
+                    document.getElementsByClassName("name")[0].innerText = `${myUser}`
+                    document.getElementsByClassName("role")[0].innerText = `Sniper`
+                    document.getElementById('gameSettingErrorField').innerHTML = ""
+                    document.getElementById('createfield').style.display = "none"
+                    document.getElementById('inGameField').style.display = "flex"
+                }
+                else if (roleAssignedList[i].detective == myUser) {
+                    document.getElementsByClassName("name")[0].innerText = `${myUser}`
+                    document.getElementsByClassName("role")[0].innerText = `Detective`
+                    document.getElementById('gameSettingErrorField').innerHTML = ""
+                    document.getElementById('createfield').style.display = "none"
+                    document.getElementById('inGameField').style.display = "flex"
+                }
+                else if (roleAssignedList[i].swapper == myUser) {
+                    document.getElementsByClassName("name")[0].innerText = `${myUser}`
+                    document.getElementsByClassName("role")[0].innerText = `Assassin`
+                    document.getElementById('gameSettingErrorField').innerHTML = ""
+                    document.getElementById('createfield').style.display = "none"
+                    document.getElementById('inGameField').style.display = "flex"
+                }
+                else if (roleAssignedList[i].doctor == myUser) {
+                    document.getElementsByClassName("name")[0].innerText = `${myUser}`
+                    document.getElementsByClassName("role")[0].innerText = `Doctor`
+                    document.getElementById('gameSettingErrorField').innerHTML = ""
+                    document.getElementById('createfield').style.display = "none"
+                    document.getElementById('inGameField').style.display = "flex"
+                }
+                else if (roleAssignedList[i].jester == myUser) {
+                    document.getElementsByClassName("name")[0].innerText = `${myUser}`
+                    document.getElementsByClassName("role")[0].innerText = `Jester`
+                    document.getElementById('gameSettingErrorField').innerHTML = ""
+                    document.getElementById('createfield').style.display = "none"
+                    document.getElementById('inGameField').style.display = "flex"
+                }
+                else if (roleAssignedList[i].engineer == myUser) {
+                    document.getElementsByClassName("name")[0].innerText = `${myUser}`
+                    document.getElementsByClassName("role")[0].innerText = `Engineer`
+                    document.getElementById('gameSettingErrorField').innerHTML = ""
+                    document.getElementById('createfield').style.display = "none"
+                    document.getElementById('inGameField').style.display = "flex"
+                }
+            }
+        }
+        catch {
+            console.log('533 No List')
+        }
+    })
 }
+db.collection('among-us-data').doc('activeGameRoleData').onSnapshot(function (doc) {
+    retrieveRole()
+})
