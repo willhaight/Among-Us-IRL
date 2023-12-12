@@ -245,9 +245,9 @@ document.getElementById("leaveLobby2").onclick = function () {
     retrieveRole()
 
 }
-
+let listedUsers = []
 db.collection('among-us-data').doc('users').get().then(function (doc) {
-    let listedUsers = doc.data().names
+    listedUsers = doc.data().names
     for (i = 0; i < listedUsers.length; i++) {
         if (myUser == doc.data().names[i]) {
             loadUsers()
@@ -517,8 +517,13 @@ function retrieveRole() {
         roleAssignedList = doc.data().nameRoles
         if (roleAssignedList == "") {
             document.getElementById('gameSettingErrorField').innerHTML = ""
-            document.getElementById('createfield').style.display = "flex"
+            document.getElementById('createfield').style.display = "none"
             document.getElementById('inGameField').style.display = "none"
+            for (let i = 0; i < listedUsers.length; i++) {
+                if (myUser == listedUsers[i]) {
+                    document.getElementById('createfield').style.display = "flex"
+                }
+            }
         }
         try {
             for (i = 0; i < roleAssignedList.length; i++) {
@@ -574,7 +579,7 @@ function retrieveRole() {
             }
         }
         catch {
-            console.log('533 No List')
+            console.log('error retrieveRole "No List"')
         }
     })
 }

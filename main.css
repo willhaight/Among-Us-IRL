@@ -155,3 +155,28 @@ body,
     align-items: center;
     border: 1px solid white;
 }
+
+.inGameField {
+    display: flex;
+    flex-direction: column;
+}
+
+.emergency-meeting-button {
+    height: 100px;
+    width: 100px;
+    padding: 30px 30px 30px 30px;
+    background-image: url('emergency-metting.PNG');
+    background-repeat: none;
+    background-position: center;
+    background-size: cover;
+}
+
+.report-button {
+    height: 100px;
+    width: 100px;
+    padding: 30px 30px 30px 30px;
+    background-image: url('among-us-report.PNG');
+    background-repeat: none;
+    background-position: center;
+    background-size: cover;
+}
