@@ -175,6 +175,7 @@ body {
     flex-direction: row;
     flex-wrap: wrap;
     background-color: black;
+    justify-content: center;
     border: 1px solid white;
 }
 
@@ -217,4 +218,86 @@ body {
     height: 100px;
     width: 100px;
     margin: .7em .7em .7em .7em;
+}
+
+.sniper-controls,
+.assassin-controls,
+.detective-controls,
+.engineer-controls,
+.doctor-controls {
+    width: 90%;
+    border: 1px solid white;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: black;
+    justify-content: center;
+}
+
+.sniper-controls div,
+.assassin-controls div,
+.detective-controls div,
+.engineer-controls div,
+.doctor-controls div {
+    border: solid 1px white;
+    border-radius: 50%;
+    height: 100px;
+    width: 100px;
+    margin: .7em .7em .7em .7em;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: black;
+    justify-content: center;
+}
+
+.kill-button {
+    padding: 30px 30px 30px 30px;
+    background-image: url('src/kill-button.PNG');
+    background-repeat: none;
+    background-position: center;
+    background-size: cover;
+}
+
+.sniper-button {
+    padding: 30px 30px 30px 30px;
+    background-image: url('src/snipe-button.PNG');
+    background-repeat: none;
+    background-position: center;
+    background-size: cover;
+}
+
+.sab-button {
+    padding: 30px 30px 30px 30px;
+    background-image: url('src/sab-button.PNG');
+    background-repeat: none;
+    background-position: center;
+    background-size: cover;
+}
+
+.detect-button {
+    padding: 30px 30px 30px 30px;
+    background-image: url('src/investigate-button.PNG');
+    background-repeat: none;
+    background-position: center;
+    background-size: cover;
+}
+
+.task-status {
+    width: 90%;
+    border: solid 1px white;
+    display: flex;
+    flex-direction: column;
+    background-color: black;
+    align-items: center;
+}
+
+.task-spec {
+    border: 1px solid white;
+    border-radius: 10%;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: .2em;
+    padding-bottom: .2em;
+    font-weight: bold;
 }

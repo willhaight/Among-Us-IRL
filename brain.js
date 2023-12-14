@@ -440,6 +440,9 @@ document.getElementById('startGame').onclick = function () {
         document.getElementById('createfield').style.display = "none"
         document.getElementById('inGameField').style.display = "flex"
         scrambleRoles()
+        db.collection('among-us-data').doc('globalGameData').update({
+            taskTotal: gameRoleSetting[3].tasks * gameRoleSetting[10].players
+        })
     } else {
         document.getElementById('gameSettingErrorField').innerHTML = "<p>Numbers dont match</p>"
     }
@@ -512,6 +515,7 @@ function scrambleRoles() {
 }
 
 let roleAssignedList = []
+let myAssignedRole = ""
 function retrieveRole() {
     db.collection("among-us-data").doc("activeGameRoleData").get().then(function (doc) {
         roleAssignedList = doc.data().nameRoles
@@ -533,6 +537,7 @@ function retrieveRole() {
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
+                    myAssignedRole = "crewmate"
                 }
                 else if (roleAssignedList[i].sniper == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
@@ -540,6 +545,7 @@ function retrieveRole() {
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
+                    myAssignedRole = "sniper"
                 }
                 else if (roleAssignedList[i].detective == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
@@ -547,6 +553,7 @@ function retrieveRole() {
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
+                    myAssignedRole = "detective"
                 }
                 else if (roleAssignedList[i].swapper == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
@@ -554,6 +561,7 @@ function retrieveRole() {
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
+                    myAssignedRole = "assassin"
                 }
                 else if (roleAssignedList[i].doctor == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
@@ -561,6 +569,7 @@ function retrieveRole() {
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
+                    myAssignedRole = "doctor"
                 }
                 else if (roleAssignedList[i].jester == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
@@ -568,6 +577,7 @@ function retrieveRole() {
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
+                    myAssignedRole = "jester"
                 }
                 else if (roleAssignedList[i].engineer == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
@@ -575,6 +585,7 @@ function retrieveRole() {
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
+                    myAssignedRole = "engineer"
                 }
             }
         }
@@ -586,3 +597,135 @@ function retrieveRole() {
 db.collection('among-us-data').doc('activeGameRoleData').onSnapshot(function (doc) {
     retrieveRole()
 })
+
+//Role Revealing
+document.getElementsByClassName('sniper-controls')[0].style.display = "none"
+document.getElementsByClassName('assassin-controls')[0].style.display = "none"
+document.getElementsByClassName('engineer-controls')[0].style.display = "none"
+document.getElementsByClassName('doctor-controls')[0].style.display = "none"
+document.getElementsByClassName('detective-controls')[0].style.display = "none"
+document.getElementsByClassName('sab-alert')[0].style.display = "none"
+document.getElementsByClassName('report-alert')[0].style.display = "none"
+document.getElementsByClassName('game-won-alert')[0].style.display = "none"
+document.getElementsByClassName('game-lost-alert')[0].style.display = "none"
+document.getElementsByClassName('task-status')[0].style.display = "none"
+
+
+let allTaskDone = 0;
+document.getElementsByClassName('role-button')[0].onclick = function () {
+    if (myAssignedRole == "crewmate") {
+        if (document.getElementsByClassName('task-status')[0].style.display = "none") {
+            document.getElementsByClassName('task-status')[0].style.display = "flex"
+        } else {
+            document.getElementsByClassName('task-status')[0].style.display = "none"
+        }
+    }
+    else if (myAssignedRole == "sniper") {
+        if (document.getElementsByClassName("sniper-controls")[0].style.display == "none") {
+            document.getElementsByClassName("sniper-controls")[0].style.display = "flex"
+            document.getElementsByClassName('task-status')[0].style.display = "flex"
+        } else {
+            document.getElementsByClassName("sniper-controls")[0].style.display = "none"
+            document.getElementsByClassName('task-status')[0].style.display = "none"
+        }
+    }
+    else if (myAssignedRole == "detective") {
+        if (document.getElementsByClassName("detective-controls")[0].style.display == "none") {
+            document.getElementsByClassName("detective-controls")[0].style.display = "flex"
+            document.getElementsByClassName('task-status')[0].style.display = "flex"
+        } else {
+            document.getElementsByClassName("detective-controls")[0].style.display = "none"
+            document.getElementsByClassName('task-status')[0].style.display = "none"
+        }
+    }
+    else if (myAssignedRole == "assassin") {
+        if (document.getElementsByClassName("assassin-controls")[0].style.display == "none") {
+            document.getElementsByClassName("assassin-controls")[0].style.display = "flex"
+            document.getElementsByClassName('task-status')[0].style.display = "flex"
+        } else {
+            document.getElementsByClassName("assassin-controls")[0].style.display = "none"
+            document.getElementsByClassName('task-status')[0].style.display = "none"
+        }
+    }
+    else if (myAssignedRole == "doctor") {
+        if (document.getElementsByClassName("doctor-controls")[0].style.display == "none") {
+            document.getElementsByClassName("doctor-controls")[0].style.display = "flex"
+            document.getElementsByClassName('task-status')[0].style.display = "flex"
+        } else {
+            document.getElementsByClassName("doctor-controls")[0].style.display = "none"
+            document.getElementsByClassName('task-status')[0].style.display = "none"
+        }
+    }
+    else if (myAssignedRole == "jester") {
+        console.log('jester click')
+    }
+    else if (myAssignedRole == "engineer") {
+        if (document.getElementsByClassName("engineer-controls")[0].style.display == "none") {
+            document.getElementsByClassName("engineer-controls")[0].style.display = "flex"
+            document.getElementsByClassName('task-status')[0].style.display = "flex"
+        } else {
+            document.getElementsByClassName("engineer-controls")[0].style.display = "none"
+            document.getElementsByClassName('task-status')[0].style.display = "none"
+        }
+    }
+    else {
+        console.error("Role Not Found")
+    }
+    // task handling
+    if (myAssignedRole == "crewmate" || myAssignedRole == "doctor"
+        || myAssignedRole == "engineer" || myAssignedRole == "detective") {
+        console.log(gameRoleSetting[7].priestChecks, gameRoleSetting[3].tasks)
+        if (localStorage.getItem("Tasks")) {
+            document.getElementsByClassName('task-status')[0].innerHTML = localStorage.getItem("Tasks")
+        } else {
+            let distributeTaskCount = [];
+            let distributeCount = gameRoleSetting[3].tasks
+            for (let i = 0; i < gameRoleSetting[7].priestChecks; i++) {
+                document.getElementsByClassName('task-status')[0].innerHTML +=
+                    `<p class="task-spec">Task Station ${i + 1}:</p>`
+                distributeTaskCount.push(1)
+            }
+            for (let i = 0; i < distributeCount - distributeTaskCount.length; i++) {
+                rand = Math.floor(Math.random() * gameRoleSetting[7].priestChecks)
+                distributeTaskCount[rand] += 1
+            }
+            for (let i = 0; i < document.getElementsByClassName('task-spec').length; i++) {
+                console.log(document.getElementsByClassName('task-spec')[i].innerText)
+                document.getElementsByClassName('task-spec')[i].innerText += ` ${distributeTaskCount[i]}`
+            }
+            localStorage.setItem('Tasks', document.getElementsByClassName('task-status')[0].innerHTML)
+        }
+        for (let i = 0; i < document.getElementsByClassName('task-spec').length; i++) {
+            document.getElementsByClassName('task-spec')[i].onclick = function () {
+                console.log(allTaskDone, gameRoleSetting[3].tasks)
+                if (document.getElementsByClassName('task-spec')[i].innerText.length == 17) {
+                    document.getElementsByClassName('task-spec')[i].innerText =
+                        `Task Station ${i + 1}: ${parseInt(document.getElementsByClassName('task-spec')[i].innerText[16] - 1)}`
+                }
+                if (document.getElementsByClassName('task-spec')[i].innerText.length == 18) {
+                    document.getElementsByClassName('task-spec')[i].innerText =
+                        `Task Station ${i + 1}: ${parseInt(document.getElementsByClassName('task-spec')[i].innerText[16] +
+                            document.getElementsByClassName('task-spec')[i].innerText[17]) - 1}`
+                }
+                localStorage.setItem('Tasks', document.getElementsByClassName('task-status')[0].innerHTML)
+                db.collection('among-us-data').doc('globalGameData').get()
+                    .then(function (doc) {
+                        console.log(doc.taskTotal)
+                        db.collection('among-us-data').doc('globalGameData').update({
+                            taskTotal: doc.data().taskTotal - 1
+                        })
+                    })
+                // for (let i = 0; i < document.getElementsByClassName('task-spec').length; i++) {
+                //     if (document.getElementsByClassName('task-spec')[i].innerText[16] == '0') {
+                //         allTaskDone += 1
+                //     }
+                //     if (allTaskDone == gameRoleSetting[3].tasks) {
+                //         document.getElementsByClassName('task-status')[0].style.display = "none"
+                //     }
+                // }
+            }
+        }
+    }
+}
+//task division
+
