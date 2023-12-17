@@ -98,6 +98,9 @@ function clearInGameField() {
     document.getElementsByClassName('task-status')[0].style.display = "none"
     document.getElementsByClassName('player-role-revealer')[0].style.display = "none"
     document.getElementsByClassName('vital-tracker')[0].style.display = "none"
+    document.getElementsByClassName('task-tracker')[0].style.display = "none"
+    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+
 }
 
 
@@ -589,6 +592,7 @@ function retrieveRole() {
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
                     myAssignedRole = "crewmate"
+                    cooldownAll()
                 }
                 else if (roleAssignedList[i].sniper == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
@@ -597,6 +601,7 @@ function retrieveRole() {
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
                     myAssignedRole = "sniper"
+                    cooldownAll()
                 }
                 else if (roleAssignedList[i].detective == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
@@ -605,6 +610,7 @@ function retrieveRole() {
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
                     myAssignedRole = "detective"
+                    cooldownAll()
                 }
                 else if (roleAssignedList[i].swapper == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
@@ -613,6 +619,7 @@ function retrieveRole() {
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
                     myAssignedRole = "assassin"
+                    cooldownAll()
                 }
                 else if (roleAssignedList[i].doctor == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
@@ -621,6 +628,7 @@ function retrieveRole() {
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
                     myAssignedRole = "doctor"
+                    cooldownAll()
                 }
                 else if (roleAssignedList[i].jester == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
@@ -629,6 +637,7 @@ function retrieveRole() {
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
                     myAssignedRole = "jester"
+                    cooldownAll()
                 }
                 else if (roleAssignedList[i].engineer == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
@@ -637,11 +646,12 @@ function retrieveRole() {
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
                     myAssignedRole = "engineer"
+                    cooldownAll()
                 }
             }
         }
         catch {
-            console.log('error retrieveRole "No List"')
+
         }
 
     })
@@ -665,6 +675,8 @@ document.getElementsByClassName('game-won-alert')[0].style.display = "none"
 document.getElementsByClassName('game-lost-alert')[0].style.display = "none"
 document.getElementsByClassName('task-status')[0].style.display = "none"
 document.getElementsByClassName('vital-tracker')[0].style.display = "none"
+document.getElementsByClassName('task-tracker')[0].style.display = "none"
+document.getElementsByClassName('detect-tracker')[0].style.display = "none"
 
 
 document.getElementsByClassName('role-button')[0].onclick = function () {
@@ -693,6 +705,7 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
         } else {
             document.getElementsByClassName("detective-controls")[0].style.display = "none"
             document.getElementsByClassName('task-status')[0].style.display = "none"
+            document.getElementsByClassName('detect-tracker')[0].style.display = "none"
         }
     }
     else if (myAssignedRole == "assassin") {
@@ -700,10 +713,13 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
             document.getElementsByClassName("assassin-controls")[0].style.display = "flex"
             document.getElementsByClassName('task-status')[0].style.display = "flex"
             document.getElementsByClassName('vital-tracker')[0].style.display = 'flex'
+            document.getElementsByClassName('task-tracker')[0].style.display = 'flex'
         } else {
             document.getElementsByClassName("assassin-controls")[0].style.display = "none"
             document.getElementsByClassName('task-status')[0].style.display = "none"
             document.getElementsByClassName('vital-tracker')[0].style.display = 'none'
+            document.getElementsByClassName('task-tracker')[0].style.display = 'none'
+            document.getElementsByClassName('detect-tracker')[0].style.display = "none"
         }
     }
     else if (myAssignedRole == "doctor") {
@@ -726,9 +742,11 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
         if (document.getElementsByClassName("engineer-controls")[0].style.display == "none") {
             document.getElementsByClassName("engineer-controls")[0].style.display = "flex"
             document.getElementsByClassName('task-status')[0].style.display = "flex"
+            document.getElementsByClassName('task-tracker')[0].style.display = "flex"
         } else {
             document.getElementsByClassName("engineer-controls")[0].style.display = "none"
             document.getElementsByClassName('task-status')[0].style.display = "none"
+            document.getElementsByClassName('task-tracker')[0].style.display = "none"
         }
     }
     else {
@@ -828,6 +846,7 @@ function goDieScreen() {
     document.getElementsByClassName('player-role-revealer')[0].style.display = 'flex'
     document.getElementsByClassName('game-lost-alert')[0].style.display = 'flex'
     document.getElementsByClassName('vital-tracker')[0].style.display = 'flex'
+    document.getElementsByClassName('task-tracker')[0].style.display = "flex"
     document.getElementsByClassName('game-lost-alert')[0].innerHTML =
         '<h1>YOU ARE DEAD!</h1>'
     document.getElementsByClassName('player-role-revealer')[0].innerHTML =
@@ -885,6 +904,21 @@ document.getElementsByClassName('die-button')[0].onclick = function () {
     } else {
 
     }
+    if (myAssignedRole == "crewmate" || myAssignedRole == "doctor"
+        || myAssignedRole == "engineer" || myAssignedRole == "detective") {
+        db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
+            if (localStorage.getItem('tasksCompleted')) {
+                db.collection('among-us-data').doc('globalGameData').update({
+                    taskTotal: doc.data().taskTotal - (gameRoleSetting[3].tasks - parseInt(localStorage.getItem('tasksCompleted')))
+                })
+
+            } else {
+                db.collection('among-us-data').doc('globalGameData').update({
+                    taskTotal: doc.data().taskTotal - gameRoleSetting[3].tasks
+                })
+            }
+        })
+    }
 }
 //updating vitals
 db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
@@ -912,3 +946,240 @@ db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
         }
     })
 })
+// live task tracking
+db.collection('among-us-data').doc('globalGameData').onSnapshot(function (doc) {
+    document.getElementsByClassName('task-tracker')[0].innerHTML =
+        `<h3 class='task-tracker-text'>Tasks Remaining: ${doc.data().taskTotal}</h3>`
+})
+
+//Kill Button and cooldown functions
+//gameRoleSetting[2].killCooldown
+function cooldownAll() {
+    regKillcooldown1()
+    regKillcooldown2()
+    detectTimer1()
+    detectTimer2()
+}
+function regKillcooldown1() {
+    if (killCooldown == false) {
+        let timer = gameRoleSetting[2].killCooldown;
+        killCooldown = true
+        for (let i = 0; i < gameRoleSetting[2].killCooldown; i++) {
+            (function (currentTimer) {
+                setTimeout(function () {
+                    document.getElementsByClassName('kill-button')[1].style.opacity = '45%'
+                    document.getElementsByClassName('kill-button')[1].style.flexWrap = 'nowrap'
+                    document.getElementsByClassName('kill-button')[1].innerHTML = `<p>${currentTimer - 1}</p>`;
+                    if (currentTimer === 1) {
+                        document.getElementsByClassName('kill-button')[1].innerHTML = "";
+                        document.getElementsByClassName('kill-button')[1].style.opacity = '100%'
+                        killCooldown = false
+                    }
+                }, (gameRoleSetting[2].killCooldown - currentTimer) * 1000);
+            })(timer--);
+        }
+    }
+}
+function regKillcooldown2() {
+    if (killCooldown == false) {
+        let timer = gameRoleSetting[2].killCooldown;
+        killCooldown = true
+        for (let i = 0; i < gameRoleSetting[2].killCooldown; i++) {
+            (function (currentTimer) {
+                setTimeout(function () {
+                    document.getElementsByClassName('kill-button')[0].style.opacity = '45%'
+                    document.getElementsByClassName('kill-button')[0].style.flexWrap = 'nowrap'
+                    document.getElementsByClassName('kill-button')[0].innerHTML = `<p>${currentTimer - 1}</p>`;
+                    if (currentTimer === 1) {
+                        document.getElementsByClassName('kill-button')[0].innerHTML = "";
+                        document.getElementsByClassName('kill-button')[0].style.opacity = '100%'
+                        killCooldown = false
+                    }
+                }, (gameRoleSetting[2].killCooldown - currentTimer) * 1000);
+            })(timer--);
+        }
+    }
+}
+let killCooldown = false
+
+document.getElementsByClassName('kill-button')[0].onclick = function () {
+    regKillcooldown2()
+}
+document.getElementsByClassName('kill-button')[1].onclick = function () {
+    regKillcooldown1()
+};
+//detect button
+
+function detectTimer1() {
+    if (document.getElementsByClassName('detect-button')[1].style.opacity = '1') {
+        let timer = gameRoleSetting[2].killCooldown * 3;
+        detectCooldown = true
+
+        for (x = 0; x < gameRoleSetting[2].killCooldown * 3; x++) {
+            (function (currentTimer) {
+                setTimeout(function () {
+                    document.getElementsByClassName('detect-button')[1].style.opacity = '45%'
+                    document.getElementsByClassName('detect-button')[1].style.flexWrap = 'nowrap'
+                    document.getElementsByClassName('detect-button')[1].innerHTML = `<p>${currentTimer - 1}</p>`;
+                    if (currentTimer === 1) {
+                        document.getElementsByClassName('detect-button')[1].innerHTML = "";
+                        document.getElementsByClassName('detect-button')[1].style.opacity = '100%'
+                        detectCooldown = false
+                    }
+                }, (gameRoleSetting[2].killCooldown * 3 - currentTimer) * 1000);
+            })(timer--);
+        }
+    }
+}
+
+function detectTimer2() {
+    if (document.getElementsByClassName('detect-button')[0].style.opacity = '1') {
+        let timer = gameRoleSetting[2].killCooldown * 3;
+        detectCooldown = true
+
+        for (x = 0; x < gameRoleSetting[2].killCooldown * 3; x++) {
+            (function (currentTimer) {
+                setTimeout(function () {
+                    document.getElementsByClassName('detect-button')[0].style.opacity = '45%'
+                    document.getElementsByClassName('detect-button')[0].style.flexWrap = 'nowrap'
+                    document.getElementsByClassName('detect-button')[0].innerHTML = `<p>${currentTimer - 1}</p>`;
+                    if (currentTimer === 1) {
+                        document.getElementsByClassName('detect-button')[0].innerHTML = "";
+                        document.getElementsByClassName('detect-button')[0].style.opacity = '100%'
+                        detectCooldown = false
+                    }
+                }, (gameRoleSetting[2].killCooldown * 3 - currentTimer) * 1000);
+            })(timer--);
+        }
+    }
+}
+
+function detectCooldown1() {
+    document.getElementsByClassName('detect-tracker')[0].innerHTML = ''
+    if (detectCooldown == false) {
+        document.getElementsByClassName('detect-tracker')[0].style.display = "flex"
+        for (i = 0; i < userList.length; i++) {
+            document.getElementsByClassName('detect-tracker')[0].innerHTML +=
+                `<p class='detect-list-data'>${userList[i]}</p>`
+        }
+        if (userList.length == document.getElementsByClassName('detect-list-data').length) {
+            db.collection("among-us-data").doc("activeGameRoleData").get().then(function (doc) {
+                for (let i = 0; i < doc.data().nameRoles.length; i++) {
+                    const element = document.getElementsByClassName('detect-list-data')[i];
+                    if (element) {
+                        element.onclick = (function (index) {
+                            return function () {
+                                if (doc.data().nameRoles[index].sniper) {
+                                    alert(`${userList[index]}'s role is: Sniper`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer1()
+                                }
+                                if (doc.data().nameRoles[index].swapper) {
+                                    alert(`${userList[index]}'s role is: Assassin`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer1()
+                                }
+                                if (doc.data().nameRoles[index].jester) {
+                                    alert(`${userList[index]}'s role is: Jester`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer1()
+                                }
+                                if (doc.data().nameRoles[index].crewmate) {
+                                    alert(`${userList[index]}'s role is: Crewmate`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer1()
+                                }
+                                if (doc.data().nameRoles[index].detective) {
+                                    alert(`${userList[index]}'s role is: Detective`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer1()
+                                }
+                                if (doc.data().nameRoles[index].doctor) {
+                                    alert(`${userList[index]}'s role is: Doctor`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer1()
+                                }
+                                if (doc.data().nameRoles[index].engineer) {
+                                    alert(`${userList[index]}'s role is: Engineer`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer1()
+                                }
+                            };
+                        })(i);
+                    }
+                }
+            });
+        }
+
+    }
+}
+
+function detectCooldown2() {
+    document.getElementsByClassName('detect-tracker')[0].innerHTML = ''
+    if (detectCooldown == false) {
+        document.getElementsByClassName('detect-tracker')[0].style.display = "flex"
+        for (i = 0; i < userList.length; i++) {
+            document.getElementsByClassName('detect-tracker')[0].innerHTML +=
+                `<p class='detect-list-data'>${userList[i]}</p>`
+        }
+        if (userList.length == document.getElementsByClassName('detect-list-data').length) {
+            db.collection("among-us-data").doc("activeGameRoleData").get().then(function (doc) {
+                for (let i = 0; i < doc.data().nameRoles.length; i++) {
+                    const element = document.getElementsByClassName('detect-list-data')[i];
+                    if (element) {
+                        element.onclick = (function (index) {
+                            return function () {
+                                if (doc.data().nameRoles[index].sniper) {
+                                    alert(`${userList[index]}'s role is: Sniper`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                                if (doc.data().nameRoles[index].swapper) {
+                                    alert(`${userList[index]}'s role is: Assassin`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                                if (doc.data().nameRoles[index].jester) {
+                                    alert(`${userList[index]}'s role is: Jester`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                                if (doc.data().nameRoles[index].crewmate) {
+                                    alert(`${userList[index]}'s role is: Crewmate`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                                if (doc.data().nameRoles[index].detective) {
+                                    alert(`${userList[index]}'s role is: Detective`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                                if (doc.data().nameRoles[index].doctor) {
+                                    alert(`${userList[index]}'s role is: Doctor`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                                if (doc.data().nameRoles[index].engineer) {
+                                    alert(`${userList[index]}'s role is: Engineer`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                            };
+                        })(i);
+                    }
+                }
+            });
+        }
+
+    }
+}
+
+let detectCooldown = false
+
+document.getElementsByClassName('detect-button')[1].onclick = function () {
+    detectCooldown1()
+};
+
+document.getElementsByClassName('detect-button')[0].onclick = function () {
+    detectCooldown2()
+}

@@ -256,6 +256,9 @@ body {
     background-repeat: none;
     background-position: center;
     background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .sniper-button {
@@ -280,6 +283,7 @@ body {
     background-repeat: none;
     background-position: center;
     background-size: cover;
+    align-items: center;
 }
 
 .task-status {
@@ -320,7 +324,8 @@ body {
 }
 
 .player-role-revealer,
-.vital-tracker {
+.vital-tracker,
+.task-tracker {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -335,7 +340,28 @@ body {
     width: 125%;
 }
 
-.vital-tracker {
+.vital-tracker,
+.task-tracker {
     width: 90%;
     border: 1px solid white;
+}
+
+.kill-button p,
+.detect-button p {
+    font-size: 4em;
+}
+
+.detect-tracker {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    border: 1px solid white;
+    background-color: black;
+}
+
+.detect-list-data {
+    border: 1px solid white;
+    min-width: 30%;
 }
