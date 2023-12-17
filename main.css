@@ -301,3 +301,36 @@ body {
     padding-bottom: .2em;
     font-weight: bold;
 }
+
+.game-won-alert {
+    background-color: rgba(103, 236, 103, 0.507);
+    border-radius: 50%;
+    justify-content: center;
+    width: 130%;
+    /* padding-left: 10em;
+    padding-right: 10em; */
+}
+
+.game-lost-alert {
+    background-color: rgba(236, 103, 103, 0.507);
+    border-radius: 50%;
+    justify-content: center;
+    width: 130%;
+    /* padding-left: 10em;
+    padding-right: 10em; */
+}
+
+.player-role-revealer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+}
+
+.player-role-revealer h1 {
+    border-bottom: 1px solid white;
+    display: flex;
+    justify-content: center;
+    width: 125%;
+}

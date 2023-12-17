@@ -85,6 +85,20 @@ function leaveLobby(user) {
         });
 }
 
+function clearInGameField() {
+    document.getElementsByClassName('sniper-controls')[0].style.display = "none"
+    document.getElementsByClassName('assassin-controls')[0].style.display = "none"
+    document.getElementsByClassName('engineer-controls')[0].style.display = "none"
+    document.getElementsByClassName('doctor-controls')[0].style.display = "none"
+    document.getElementsByClassName('detective-controls')[0].style.display = "none"
+    document.getElementsByClassName('sab-alert')[0].style.display = "none"
+    document.getElementsByClassName('report-alert')[0].style.display = "none"
+    document.getElementsByClassName('game-won-alert')[0].style.display = "none"
+    document.getElementsByClassName('game-lost-alert')[0].style.display = "none"
+    document.getElementsByClassName('task-status')[0].style.display = "none"
+    document.getElementsByClassName('player-role-revealer')[0].style.display = "none"
+}
+
 
 //inputs
 let newEmail = document.getElementById('newAccEmail')
@@ -242,8 +256,14 @@ document.getElementById("leaveLobby2").onclick = function () {
     db.collection("among-us-data").doc('activeGameRoleData').update({
         nameRoles: ''
     })
-    retrieveRole()
-
+        .then(() => {
+            // Code to execute after the update operation is completed
+            location.reload()
+        })
+        .catch((error) => {
+            // Handle errors if the update operation fails
+            console.error("Error updating document:", error);
+        });
 }
 let listedUsers = []
 db.collection('among-us-data').doc('users').get().then(function (doc) {
@@ -441,7 +461,8 @@ document.getElementById('startGame').onclick = function () {
         document.getElementById('inGameField').style.display = "flex"
         scrambleRoles()
         db.collection('among-us-data').doc('globalGameData').update({
-            taskTotal: gameRoleSetting[3].tasks * gameRoleSetting[10].players
+            taskTotal: (gameRoleSetting[10].players - gameRoleSetting[0].snipers -
+                gameRoleSetting[1].swappers) * gameRoleSetting[3].tasks
         })
     } else {
         document.getElementById('gameSettingErrorField').innerHTML = "<p>Numbers dont match</p>"
@@ -523,6 +544,20 @@ function retrieveRole() {
             document.getElementById('gameSettingErrorField').innerHTML = ""
             document.getElementById('createfield').style.display = "none"
             document.getElementById('inGameField').style.display = "none"
+            document.getElementsByClassName('sniper-controls')[0].style.display = "none"
+            document.getElementsByClassName('assassin-controls')[0].style.display = "none"
+            document.getElementsByClassName('engineer-controls')[0].style.display = "none"
+            document.getElementsByClassName('doctor-controls')[0].style.display = "none"
+            document.getElementsByClassName('detective-controls')[0].style.display = "none"
+            document.getElementsByClassName('sab-alert')[0].style.display = "none"
+            document.getElementsByClassName('report-alert')[0].style.display = "none"
+            document.getElementsByClassName('game-won-alert')[0].style.display = "none"
+            document.getElementsByClassName('game-lost-alert')[0].style.display = "none"
+            document.getElementsByClassName('task-status')[0].style.display = "none"
+            document.getElementsByClassName('player-role-revealer')[0].style.display = "none"
+            localStorage.removeItem('Tasks')
+            localStorage.removeItem('tasksCompleted')
+            localStorage.removeItem('dead')
             for (let i = 0; i < listedUsers.length; i++) {
                 if (myUser == listedUsers[i]) {
                     document.getElementById('createfield').style.display = "flex"
@@ -611,13 +646,14 @@ document.getElementsByClassName('game-lost-alert')[0].style.display = "none"
 document.getElementsByClassName('task-status')[0].style.display = "none"
 
 
-let allTaskDone = 0;
 document.getElementsByClassName('role-button')[0].onclick = function () {
     if (myAssignedRole == "crewmate") {
-        if (document.getElementsByClassName('task-status')[0].style.display = "none") {
+        if (document.getElementsByClassName('task-status')[0].style.display == "none") {
             document.getElementsByClassName('task-status')[0].style.display = "flex"
+            console.log('flex it')
         } else {
             document.getElementsByClassName('task-status')[0].style.display = "none"
+            console.log('none it')
         }
     }
     else if (myAssignedRole == "sniper") {
@@ -672,11 +708,19 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
         console.error("Role Not Found")
     }
     // task handling
+    let totalTasksCompleted = 0;
+    if (localStorage.getItem("tasksCompleted")) {
+        totalTasksCompleted = parseInt(localStorage.getItem("tasksCompleted"))
+    }
     if (myAssignedRole == "crewmate" || myAssignedRole == "doctor"
         || myAssignedRole == "engineer" || myAssignedRole == "detective") {
-        console.log(gameRoleSetting[7].priestChecks, gameRoleSetting[3].tasks)
         if (localStorage.getItem("Tasks")) {
             document.getElementsByClassName('task-status')[0].innerHTML = localStorage.getItem("Tasks")
+            for (let i = 0; i < document.getElementsByClassName('task-spec').length; i++) {
+                if (document.getElementsByClassName('task-spec')[i].innerText[16] == '0') {
+                    document.getElementsByClassName('task-spec')[i].style.display = 'none'
+                }
+            }
         } else {
             let distributeTaskCount = [];
             let distributeCount = gameRoleSetting[3].tasks
@@ -697,7 +741,6 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
         }
         for (let i = 0; i < document.getElementsByClassName('task-spec').length; i++) {
             document.getElementsByClassName('task-spec')[i].onclick = function () {
-                console.log(allTaskDone, gameRoleSetting[3].tasks)
                 if (document.getElementsByClassName('task-spec')[i].innerText.length == 17) {
                     document.getElementsByClassName('task-spec')[i].innerText =
                         `Task Station ${i + 1}: ${parseInt(document.getElementsByClassName('task-spec')[i].innerText[16] - 1)}`
@@ -710,22 +753,103 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
                 localStorage.setItem('Tasks', document.getElementsByClassName('task-status')[0].innerHTML)
                 db.collection('among-us-data').doc('globalGameData').get()
                     .then(function (doc) {
-                        console.log(doc.taskTotal)
+                        totalTasksCompleted += 1
+                        localStorage.setItem('tasksCompleted', totalTasksCompleted)
+                        if (totalTasksCompleted == gameRoleSetting[3].tasks) {
+                            localStorage.setItem('Tasks', '<p>Tasks Completed!</p>')
+                            localStorage.setItem('tasksCompleted', "<p>Tasks Completed!</p>")
+                        }
                         db.collection('among-us-data').doc('globalGameData').update({
                             taskTotal: doc.data().taskTotal - 1
                         })
                     })
-                // for (let i = 0; i < document.getElementsByClassName('task-spec').length; i++) {
-                //     if (document.getElementsByClassName('task-spec')[i].innerText[16] == '0') {
-                //         allTaskDone += 1
-                //     }
-                //     if (allTaskDone == gameRoleSetting[3].tasks) {
-                //         document.getElementsByClassName('task-status')[0].style.display = "none"
-                //     }
-                // }
+                for (let i = 0; i < document.getElementsByClassName('task-spec').length; i++) {
+                    if (document.getElementsByClassName('task-spec')[i].innerText[16] == '0') {
+                        document.getElementsByClassName('task-spec')[i].style.display = 'none'
+                    }
+                }
             }
         }
     }
 }
-//task division
+//task win condition
+db.collection('among-us-data').doc('globalGameData').onSnapshot(function (doc) {
+    if (doc.data().taskTotal == 0 &&
+        myAssignedRole == "crewmate" || myAssignedRole == "doctor"
+        || myAssignedRole == "engineer" || myAssignedRole == "detective") {
+        document.getElementsByClassName('universalControls')[0].style.display = 'none'
+        clearInGameField()
+        document.getElementsByClassName('game-won-alert')[0].style.display = 'flex'
+        document.getElementsByClassName('game-won-alert')[0].innerHTML =
+            "<h1 class='gameWinEnd'>VICTORY!</h1>"
+    }
+    if (doc.data().taskTotal == 0 &&
+        myAssignedRole == "sniper" || myAssignedRole == "assassin"
+        || myAssignedRole == "jester") {
+        document.getElementsByClassName('universalControls')[0].style.display = 'none'
+        clearInGameField()
+        document.getElementsByClassName('game-lost-alert')[0].style.display = 'flex'
+        document.getElementsByClassName('game-lost-alert')[0].innerHTML =
+            "<h1 class='gameLossEnd'>DEFEAT!</h1>"
+    }
 
+})
+//die button
+function goDieScreen() {
+    document.getElementsByClassName('universalControls')[0].style.display = 'none'
+    clearInGameField()
+    document.getElementsByClassName('player-role-revealer')[0].style.display = 'flex'
+    document.getElementsByClassName('game-lost-alert')[0].style.display = 'flex'
+    document.getElementsByClassName('game-lost-alert')[0].innerHTML =
+        '<h1>YOU ARE DEAD!</h1>'
+    document.getElementsByClassName('player-role-revealer')[0].innerHTML =
+        `<h1 class='gameWinEnd'>Roles</h1>`
+    db.collection("among-us-data").doc("activeGameRoleData").get().then(function (doc) {
+        console.log(doc.data().nameRoles[0].sniper)
+        for (i = 0; i < doc.data().nameRoles.length; i++) {
+            if (doc.data().nameRoles[i].sniper) {
+                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                    `<p>${doc.data().nameRoles[i].sniper}: Sniper</p>`
+            }
+            if (doc.data().nameRoles[i].swapper) {
+                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                    `<p>${doc.data().nameRoles[i].swapper}: Assassin</p>`
+            }
+            if (doc.data().nameRoles[i].jester) {
+                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                    `<p>${doc.data().nameRoles[i].jester}: Jester</p>`
+            }
+            if (doc.data().nameRoles[i].crewmate) {
+                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                    `<p>${doc.data().nameRoles[i].crewmate}: Crewmate</p>`
+            }
+            if (doc.data().nameRoles[i].detective) {
+                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                    `<p>${doc.data().nameRoles[i].detective}: Detective</p>`
+            }
+            if (doc.data().nameRoles[i].doctor) {
+                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                    `<p>${doc.data().nameRoles[i].doctor}: Doctor</p>`
+            }
+            if (doc.data().nameRoles[i].engineer) {
+                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                    `<p>${doc.data().nameRoles[i].engineer}: Engineer</p>`
+            }
+        }
+    })
+    localStorage.setItem('dead', 'dead')
+}
+if (localStorage.getItem('dead')) {
+    goDieScreen()
+}
+document.getElementsByClassName('die-button')[0].onclick = function () {
+    var userConfirmed = window.confirm("Are you sure that you are dead?");
+    if (userConfirmed) {
+        goDieScreen()
+    } else {
+
+    }
+}
+
+// document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+// `<p>${doc.data}</p>`
