@@ -97,6 +97,7 @@ function clearInGameField() {
     document.getElementsByClassName('game-lost-alert')[0].style.display = "none"
     document.getElementsByClassName('task-status')[0].style.display = "none"
     document.getElementsByClassName('player-role-revealer')[0].style.display = "none"
+    document.getElementsByClassName('vital-tracker')[0].style.display = "none"
 }
 
 
@@ -477,6 +478,7 @@ db.collection('among-us-data').doc('users').onSnapshot(function (doc) {
 let playerRoles = []
 let userList = []
 let roleCirculation = []
+let liveVitals = []
 
 // let gameRoleSetting = [
 //    0 { snipers: 0 },
@@ -494,7 +496,7 @@ let roleCirculation = []
 function scrambleRoles() {
     db.collection('among-us-data').doc('users').get()
         .then(function (doc) {
-            userList = doc.data();
+            userList = doc.data().names;
             let roleCirculationCopy = [...roleCirculation];
             for (let i = 0; i < gameRoleSetting[6].priests; i++) {
                 roleCirculationCopy.push('doctor');
@@ -523,7 +525,7 @@ function scrambleRoles() {
             for (let i = 0; i < escapedCounter; i++) {
                 let randomRoleIndex = Math.floor(Math.random() * roleCirculationCopy.length);
                 let randomRole = roleCirculationCopy.splice(randomRoleIndex, 1)[0];
-                let playerName = userList.names[i];
+                let playerName = userList[i];
                 let playerRole = {};
                 playerRole[randomRole] = playerName;
                 playerRoles.push(playerRole);
@@ -532,6 +534,16 @@ function scrambleRoles() {
             db.collection("among-us-data").doc('activeGameRoleData').update({
                 nameRoles: playerRoles
             });
+            trueArr = []
+            for (i = 0; i < userList.length; i++) {
+                trueArr.push(true)
+                liveVitals.push([userList[i], trueArr[i]])
+            }
+            localStorage.setItem('vitals', 'exists')
+            db.collection('among-us-data').doc('globalGameData').update({
+                vitals: trueArr
+            })
+
         });
 }
 
@@ -558,11 +570,15 @@ function retrieveRole() {
             localStorage.removeItem('Tasks')
             localStorage.removeItem('tasksCompleted')
             localStorage.removeItem('dead')
+            localStorage.removeItem('vitals')
             for (let i = 0; i < listedUsers.length; i++) {
                 if (myUser == listedUsers[i]) {
                     document.getElementById('createfield').style.display = "flex"
                 }
             }
+            db.collection('among-us-data').doc('globalGameData').set({
+                vitals: []
+            })
         }
         try {
             for (i = 0; i < roleAssignedList.length; i++) {
@@ -627,6 +643,10 @@ function retrieveRole() {
         catch {
             console.log('error retrieveRole "No List"')
         }
+
+    })
+    db.collection('among-us-data').doc('users').get().then(function (doc) {
+        userList = doc.data().names
     })
 }
 db.collection('among-us-data').doc('activeGameRoleData').onSnapshot(function (doc) {
@@ -644,6 +664,7 @@ document.getElementsByClassName('report-alert')[0].style.display = "none"
 document.getElementsByClassName('game-won-alert')[0].style.display = "none"
 document.getElementsByClassName('game-lost-alert')[0].style.display = "none"
 document.getElementsByClassName('task-status')[0].style.display = "none"
+document.getElementsByClassName('vital-tracker')[0].style.display = "none"
 
 
 document.getElementsByClassName('role-button')[0].onclick = function () {
@@ -678,18 +699,24 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
         if (document.getElementsByClassName("assassin-controls")[0].style.display == "none") {
             document.getElementsByClassName("assassin-controls")[0].style.display = "flex"
             document.getElementsByClassName('task-status')[0].style.display = "flex"
+            document.getElementsByClassName('vital-tracker')[0].style.display = 'flex'
         } else {
             document.getElementsByClassName("assassin-controls")[0].style.display = "none"
             document.getElementsByClassName('task-status')[0].style.display = "none"
+            document.getElementsByClassName('vital-tracker')[0].style.display = 'none'
         }
     }
     else if (myAssignedRole == "doctor") {
         if (document.getElementsByClassName("doctor-controls")[0].style.display == "none") {
             document.getElementsByClassName("doctor-controls")[0].style.display = "flex"
             document.getElementsByClassName('task-status')[0].style.display = "flex"
+            document.getElementsByClassName('vital-tracker')[0].style.display = "flex"
+            console.log('flex it')
         } else {
             document.getElementsByClassName("doctor-controls")[0].style.display = "none"
             document.getElementsByClassName('task-status')[0].style.display = "none"
+            document.getElementsByClassName('vital-tracker')[0].style.display = 'none'
+            console.log('flex not')
         }
     }
     else if (myAssignedRole == "jester") {
@@ -775,8 +802,8 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
 //task win condition
 db.collection('among-us-data').doc('globalGameData').onSnapshot(function (doc) {
     if (doc.data().taskTotal == 0 &&
-        myAssignedRole == "crewmate" || myAssignedRole == "doctor"
-        || myAssignedRole == "engineer" || myAssignedRole == "detective") {
+        (myAssignedRole == "crewmate" || myAssignedRole == "doctor"
+            || myAssignedRole == "engineer" || myAssignedRole == "detective")) {
         document.getElementsByClassName('universalControls')[0].style.display = 'none'
         clearInGameField()
         document.getElementsByClassName('game-won-alert')[0].style.display = 'flex'
@@ -784,8 +811,8 @@ db.collection('among-us-data').doc('globalGameData').onSnapshot(function (doc) {
             "<h1 class='gameWinEnd'>VICTORY!</h1>"
     }
     if (doc.data().taskTotal == 0 &&
-        myAssignedRole == "sniper" || myAssignedRole == "assassin"
-        || myAssignedRole == "jester") {
+        (myAssignedRole == "sniper" || myAssignedRole == "assassin"
+            || myAssignedRole == "jester")) {
         document.getElementsByClassName('universalControls')[0].style.display = 'none'
         clearInGameField()
         document.getElementsByClassName('game-lost-alert')[0].style.display = 'flex'
@@ -800,12 +827,12 @@ function goDieScreen() {
     clearInGameField()
     document.getElementsByClassName('player-role-revealer')[0].style.display = 'flex'
     document.getElementsByClassName('game-lost-alert')[0].style.display = 'flex'
+    document.getElementsByClassName('vital-tracker')[0].style.display = 'flex'
     document.getElementsByClassName('game-lost-alert')[0].innerHTML =
         '<h1>YOU ARE DEAD!</h1>'
     document.getElementsByClassName('player-role-revealer')[0].innerHTML =
         `<h1 class='gameWinEnd'>Roles</h1>`
     db.collection("among-us-data").doc("activeGameRoleData").get().then(function (doc) {
-        console.log(doc.data().nameRoles[0].sniper)
         for (i = 0; i < doc.data().nameRoles.length; i++) {
             if (doc.data().nameRoles[i].sniper) {
                 document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
@@ -845,11 +872,43 @@ if (localStorage.getItem('dead')) {
 document.getElementsByClassName('die-button')[0].onclick = function () {
     var userConfirmed = window.confirm("Are you sure that you are dead?");
     if (userConfirmed) {
-        goDieScreen()
+        let tempArr = []
+        for (i = 0; i < liveVitals.length; i++) {
+            if (liveVitals[i][0] == myUser) {
+                liveVitals[i][1] = false
+            }
+            tempArr.push(liveVitals[i][1])
+        }
+        db.collection('among-us-data').doc('globalGameData').update({
+            vitals: tempArr
+        })
     } else {
 
     }
 }
-
-// document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
-// `<p>${doc.data}</p>`
+//updating vitals
+db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
+    db.collection('among-us-data').doc('users').get().then(function (doc2) {
+        for (i = 0; i < doc.data().vitals.length; i++) {
+            liveVitals.push([doc2.data().names[i], doc.data().vitals[i]])
+        }
+    })
+}).then(function () {
+    db.collection('among-us-data').doc('globalGameData').onSnapshot(function (doc) {
+        document.getElementsByClassName('vital-tracker')[0].innerHTML = ''
+        for (i = 0; i < doc.data().vitals.length; i++) {
+            liveVitals[i][1] = doc.data().vitals[i]
+            if (liveVitals[i][1] == true) {
+                document.getElementsByClassName('vital-tracker')[0].innerHTML +=
+                    `<p>${liveVitals[i][0]}: alive</p>`
+            }
+            if (liveVitals[i][1] == false) {
+                document.getElementsByClassName('vital-tracker')[0].innerHTML +=
+                    `<p>${liveVitals[i][0]}: dead</p>`
+            }
+            if (liveVitals[i][1] == false && liveVitals[i][0] == myUser) {
+                goDieScreen()
+            }
+        }
+    })
+})
