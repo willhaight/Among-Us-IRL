@@ -31,6 +31,10 @@ body {
     background-position: center;
 }
 
+.home-field p,
+.homefield h2 {
+    background-color: black;
+}
 
 .home-button {
     color: white;
@@ -364,4 +368,26 @@ body {
 .detect-list-data {
     border: 1px solid white;
     min-width: 30%;
+}
+
+.float-nauts img {
+    height: 180px;
+    width: 160px;
+}
+
+.naut-red {
+    transform: rotateZ(-52deg);
+    position: relative;
+    top: 15px;
+}
+
+.naut-blue {
+    transform: rotateZ(62deg);
+    position: relative;
+    bottom: 15px;
+    left: 15px;
+}
+
+.float-nauts {
+    display: flex;
 }
