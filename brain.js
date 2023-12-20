@@ -1274,15 +1274,17 @@ function activateSab1() {
             statusOne: true
         })
     }
+    document.getElementsByClassName('sab-selector')[0].style.display = 'none'
     sab1Cooldown()
 }
 function activateSab2() {
     let confirmation = window.confirm('Would you like to sabotage Station Two?')
     if (confirmation) {
         db.collection('among-us-data').doc('sabotage').update({
-            statusTwo: 0
+            statusTwo: 2
         })
     }
+    document.getElementsByClassName('sab-selector')[0].style.display = 'none'
     sab2Cooldown()
 }
 
@@ -1310,20 +1312,73 @@ document.getElementsByClassName('sab-option')[1].onclick = function () {
 }
 
 document.getElementById('fix-sab').onclick = function () {
-    db.collection('among-us-data').doc('sabotage').update({
-        statusOne: false
+    db.collection('among-us-data').doc('sabotage').get().then(function (doc2) {
+        if (doc2.data().statusOne == true) {
+            db.collection('among-us-data').doc('sabotage').update({
+                statusOne: false
+            })
+        }
+        if (doc2.data().statusTwo > 0) {
+            db.collection('among-us-data').doc('sabotage').update({
+                statusTwo: doc2.data().statusTwo - 1
+            })
+            document.getElementById('fix-sab').style.display = 'none'
+            localStorage.setItem('sab2', 'true')
+        }
     })
 }
 
 db.collection('among-us-data').doc('sabotage').onSnapshot(function (doc) {
-    if (doc.data().statusOne == true && myAssignedRole != 'assassin' && myAssignedRole != 'sniper') {
-        clearInGameField()
-        document.getElementsByClassName('universalControls')[0].style.display = 'none'
-        document.getElementsByClassName('sab-alert')[0].style.display = 'flex'
-    }
-    if (doc.data().statusOne == false && myAssignedRole != 'assassin' && myAssignedRole != 'sniper') {
-        clearInGameField()
-        document.getElementsByClassName('universalControls')[0].style.display = 'flex'
-        document.getElementsByClassName('sab-alert')[0].style.display = 'none'
-    }
+    db.collection('among-us-data').doc('sabotage').get().then(function (doc2) {
+        if (doc.data().statusOne == true && myAssignedRole != 'assassin' && myAssignedRole != 'sniper') {
+            clearInGameField()
+            document.getElementsByClassName('universalControls')[0].style.display = 'none'
+            document.getElementsByClassName('sab-alert')[0].style.display = 'flex'
+            document.getElementsByClassName('sab-explain')[0].innerText = ''
+            document.getElementsByClassName('sab-explain')[0].innerText += 'STATION ONE has been sabotaged!'
+        } else if (doc.data().statusOne == false && myAssignedRole != 'assassin' && myAssignedRole != 'sniper') {
+            clearInGameField()
+            document.getElementsByClassName('universalControls')[0].style.display = 'flex'
+            document.getElementsByClassName('sab-alert')[0].style.display = 'none'
+            if (doc.data().statusTwo > 0 && myAssignedRole != 'assassin' && myAssignedRole != 'sniper') {
+                clearInGameField()
+                document.getElementsByClassName('universalControls')[0].style.display = 'none'
+                document.getElementsByClassName('sab-alert')[0].style.display = 'flex'
+                document.getElementsByClassName('sab-explain')[0].innerText = ''
+                document.getElementsByClassName('sab-explain')[0].innerText += 'STATION TWO has been sabotaged!'
+                if (localStorage.getItem('sab2')) {
+                    document.getElementById('fix-sab').style.display = 'none'
+                }
+            } else if (doc.data().statusTwo == 0 && myAssignedRole != 'assassin' && myAssignedRole != 'sniper') {
+                clearInGameField()
+                document.getElementsByClassName('universalControls')[0].style.display = 'flex'
+                document.getElementById('fix-sab').style.display = "flex"
+                document.getElementsByClassName('sab-alert')[0].style.display = 'none'
+                localStorage.removeItem('sab2')
+            }
+        }
+        if (doc.data().statusOne == true && (myAssignedRole == 'assassin' || myAssignedRole == 'sniper')) {
+            document.getElementsByClassName('sab-alert')[0].style.display = 'flex'
+            document.getElementsByClassName('sab-explain')[0].innerText = ''
+            document.getElementsByClassName('sab-explain')[0].innerText += 'STATION ONE has been sabotaged!'
+        } else if (doc.data().statusOne == false && (myAssignedRole == 'assassin' || myAssignedRole == 'sniper')) {
+            document.getElementsByClassName('sab-alert')[0].style.display = 'none'
+            if (doc.data().statusTwo > 0 && (myAssignedRole == 'assassin' || myAssignedRole == 'sniper')) {
+                document.getElementsByClassName('sab-alert')[0].style.display = 'flex'
+                document.getElementsByClassName('sab-explain')[0].innerText = ''
+                document.getElementsByClassName('sab-explain')[0].innerText += 'STATION TWO has been sabotaged!'
+                if (localStorage.getItem('sab2')) {
+                    document.getElementById('fix-sab').style.display = 'none'
+                }
+            } else if (doc.data().statusTwo == 0 && (myAssignedRole == 'assassin' || myAssignedRole == 'sniper')) {
+                document.getElementById('fix-sab').style.display = "flex"
+                document.getElementsByClassName('sab-alert')[0].style.display = 'none'
+                localStorage.removeItem('sab2')
+            }
+        }
+    })
 })
+
+
+
+

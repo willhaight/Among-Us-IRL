@@ -400,10 +400,9 @@ body {
 }
 
 #fix-sab {
-    width: 30%;
     margin-top: 20px;
     margin-bottom: 20px;
-    width: 100%;
+    width: 10%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -425,4 +424,6 @@ body {
 .sab-alert {
     width: 90%;
     border: 1px solid white;
+    flex-direction: column;
+    align-items: center;
 }
