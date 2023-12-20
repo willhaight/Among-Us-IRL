@@ -271,6 +271,9 @@ body {
     background-repeat: none;
     background-position: center;
     background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .sab-button {
@@ -351,11 +354,13 @@ body {
 }
 
 .kill-button p,
-.detect-button p {
+.detect-button p,
+.sniper-button p {
     font-size: 4em;
 }
 
-.detect-tracker {
+.detect-tracker,
+.snipe-tracker {
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -365,7 +370,8 @@ body {
     background-color: black;
 }
 
-.detect-list-data {
+.detect-list-data,
+.snipe-list-data {
     border: 1px solid white;
     min-width: 30%;
 }

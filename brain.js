@@ -959,6 +959,7 @@ function cooldownAll() {
     regKillcooldown2()
     detectTimer1()
     detectTimer2()
+    snipeCooldown()
 }
 function regKillcooldown1() {
     if (killCooldown == false) {
@@ -981,9 +982,9 @@ function regKillcooldown1() {
     }
 }
 function regKillcooldown2() {
-    if (killCooldown == false) {
+    if (killCooldown2 == false) {
         let timer = gameRoleSetting[2].killCooldown;
-        killCooldown = true
+        killCooldown2 = true
         for (let i = 0; i < gameRoleSetting[2].killCooldown; i++) {
             (function (currentTimer) {
                 setTimeout(function () {
@@ -993,7 +994,7 @@ function regKillcooldown2() {
                     if (currentTimer === 1) {
                         document.getElementsByClassName('kill-button')[0].innerHTML = "";
                         document.getElementsByClassName('kill-button')[0].style.opacity = '100%'
-                        killCooldown = false
+                        killCooldown2 = false
                     }
                 }, (gameRoleSetting[2].killCooldown - currentTimer) * 1000);
             })(timer--);
@@ -1001,6 +1002,7 @@ function regKillcooldown2() {
     }
 }
 let killCooldown = false
+let killCooldown2 = false
 
 document.getElementsByClassName('kill-button')[0].onclick = function () {
     regKillcooldown2()
@@ -1035,7 +1037,7 @@ function detectTimer1() {
 function detectTimer2() {
     if (document.getElementsByClassName('detect-button')[0].style.opacity = '1') {
         let timer = gameRoleSetting[2].killCooldown * 3;
-        detectCooldown = true
+        detectCooldownTwo = true
 
         for (x = 0; x < gameRoleSetting[2].killCooldown * 3; x++) {
             (function (currentTimer) {
@@ -1046,7 +1048,7 @@ function detectTimer2() {
                     if (currentTimer === 1) {
                         document.getElementsByClassName('detect-button')[0].innerHTML = "";
                         document.getElementsByClassName('detect-button')[0].style.opacity = '100%'
-                        detectCooldown = false
+                        detectCooldownTwo = false
                     }
                 }, (gameRoleSetting[2].killCooldown * 3 - currentTimer) * 1000);
             })(timer--);
@@ -1116,7 +1118,7 @@ function detectCooldown1() {
 
 function detectCooldown2() {
     document.getElementsByClassName('detect-tracker')[0].innerHTML = ''
-    if (detectCooldown == false) {
+    if (detectCooldownTwo == false) {
         document.getElementsByClassName('detect-tracker')[0].style.display = "flex"
         for (i = 0; i < userList.length; i++) {
             document.getElementsByClassName('detect-tracker')[0].innerHTML +=
@@ -1175,6 +1177,7 @@ function detectCooldown2() {
 }
 
 let detectCooldown = false
+let detectCooldownTwo = false
 
 document.getElementsByClassName('detect-button')[1].onclick = function () {
     detectCooldown1()
@@ -1182,4 +1185,66 @@ document.getElementsByClassName('detect-button')[1].onclick = function () {
 
 document.getElementsByClassName('detect-button')[0].onclick = function () {
     detectCooldown2()
+}
+
+// Sniper button
+//
+//
+
+function snipeButton() {
+    if (snipeCooldownTrigger == false) {
+        db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
+            for (i = 0; i < userList.length; i++) {
+                document.getElementsByClassName('snipe-tracker')[0].innerHTML +=
+                    `<p class='snipe-list-data'>${userList[i]}</p>`
+            }
+            for (let i = 0; i < doc.data().vitals.length; i++) {
+                const element = document.getElementsByClassName('snipe-list-data')[i];
+                if (element) {
+                    element.onclick = (function (index) {
+                        return function () {
+                            let killConfirmed = window.confirm(`Are you sure you want to kill ${userList[i]}`)
+                            if (killConfirmed) {
+                                let newList = doc.data().vitals
+                                newList[i] = false
+                                console.log(newList)
+                                db.collection('among-us-data').doc('globalGameData').update({
+                                    vitals: newList
+                                })
+                                snipeCooldown()
+                            }
+                            document.getElementsByClassName('snipe-tracker')[0].innerHTML = ""
+                        };
+                    })(i);
+                }
+            }
+        })
+    }
+}
+
+function snipeCooldown() {
+    if (document.getElementsByClassName('sniper-button')[0].style.opacity = '1') {
+        let timer = gameRoleSetting[2].killCooldown * 2;
+        snipeCooldownTrigger = true
+        for (x = 0; x < gameRoleSetting[2].killCooldown * 2; x++) {
+            (function (currentTimer) {
+                setTimeout(function () {
+                    document.getElementsByClassName('sniper-button')[0].style.opacity = '45%'
+                    document.getElementsByClassName('sniper-button')[0].style.flexWrap = 'nowrap'
+                    document.getElementsByClassName('sniper-button')[0].innerHTML = `<p>${currentTimer - 1}</p>`;
+                    if (currentTimer === 1) {
+                        document.getElementsByClassName('sniper-button')[0].innerHTML = "";
+                        document.getElementsByClassName('sniper-button')[0].style.opacity = '100%'
+                        snipeCooldownTrigger = false
+                    }
+                }, (gameRoleSetting[2].killCooldown * 2 - currentTimer) * 1000);
+            })(timer--);
+        }
+    }
+}
+
+let snipeCooldownTrigger = false
+
+document.getElementsByClassName('sniper-button')[0].onclick = function () {
+    snipeButton()
 }
