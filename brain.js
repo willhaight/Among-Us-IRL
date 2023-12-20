@@ -100,6 +100,7 @@ function clearInGameField() {
     document.getElementsByClassName('vital-tracker')[0].style.display = "none"
     document.getElementsByClassName('task-tracker')[0].style.display = "none"
     document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+    document.getElementsByClassName('sab-alert')[0].style.display = 'none'
 
 }
 
@@ -138,6 +139,7 @@ newAccSub.onclick = function () {
                         // Update successful
                         console.log("User created with display name: " + user.displayName);
                         document.getElementById('userName').innerText = `${user.displayName}`
+                        location.reload()
                     }).catch((error) => {
                         // An error occurred
                         console.error("Error updating display name: ", error);
@@ -677,6 +679,8 @@ document.getElementsByClassName('task-status')[0].style.display = "none"
 document.getElementsByClassName('vital-tracker')[0].style.display = "none"
 document.getElementsByClassName('task-tracker')[0].style.display = "none"
 document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+document.getElementsByClassName('sab-selector')[0].style.display = 'none'
+document.getElementsByClassName('sab-alert')[0].style.display = 'none'
 
 
 document.getElementsByClassName('role-button')[0].onclick = function () {
@@ -1193,6 +1197,7 @@ document.getElementsByClassName('detect-button')[0].onclick = function () {
 
 function snipeButton() {
     if (snipeCooldownTrigger == false) {
+        document.getElementsByClassName('snipe-tracker')[0].innerHTML = ""
         db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
             for (i = 0; i < userList.length; i++) {
                 document.getElementsByClassName('snipe-tracker')[0].innerHTML +=
@@ -1248,3 +1253,77 @@ let snipeCooldownTrigger = false
 document.getElementsByClassName('sniper-button')[0].onclick = function () {
     snipeButton()
 }
+
+//
+//Sabotage button
+//
+
+let sab1Trigger = false
+let sab2Trigger = false
+
+function sabOptions() {
+    if (sab1Trigger == false && sab2Trigger == false) {
+        document.getElementsByClassName('sab-selector')[0].style.display = 'flex'
+    }
+}
+
+function activateSab1() {
+    let confirmation = window.confirm('Would you like to sabotage Station One?')
+    if (confirmation) {
+        db.collection('among-us-data').doc('sabotage').update({
+            statusOne: true
+        })
+    }
+    sab1Cooldown()
+}
+function activateSab2() {
+    let confirmation = window.confirm('Would you like to sabotage Station Two?')
+    if (confirmation) {
+        db.collection('among-us-data').doc('sabotage').update({
+            statusTwo: 0
+        })
+    }
+    sab2Cooldown()
+}
+
+function sab1Cooldown() {
+
+}
+function sab2Cooldown() {
+
+}
+
+document.getElementsByClassName('sab-button')[0].onclick = function () {
+    sabOptions()
+}
+
+document.getElementsByClassName('sab-button')[1].onclick = function () {
+    sabOptions()
+}
+
+document.getElementsByClassName('sab-option')[0].onclick = function () {
+    activateSab1()
+}
+
+document.getElementsByClassName('sab-option')[1].onclick = function () {
+    activateSab2()
+}
+
+document.getElementById('fix-sab').onclick = function () {
+    db.collection('among-us-data').doc('sabotage').update({
+        statusOne: false
+    })
+}
+
+db.collection('among-us-data').doc('sabotage').onSnapshot(function (doc) {
+    if (doc.data().statusOne == true && myAssignedRole != 'assassin' && myAssignedRole != 'sniper') {
+        clearInGameField()
+        document.getElementsByClassName('universalControls')[0].style.display = 'none'
+        document.getElementsByClassName('sab-alert')[0].style.display = 'flex'
+    }
+    if (doc.data().statusOne == false && myAssignedRole != 'assassin' && myAssignedRole != 'sniper') {
+        clearInGameField()
+        document.getElementsByClassName('universalControls')[0].style.display = 'flex'
+        document.getElementsByClassName('sab-alert')[0].style.display = 'none'
+    }
+})

@@ -360,7 +360,8 @@ body {
 }
 
 .detect-tracker,
-.snipe-tracker {
+.snipe-tracker,
+.sab-selector {
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -396,4 +397,32 @@ body {
 
 .float-nauts {
     display: flex;
+}
+
+#fix-sab {
+    width: 30%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em 2em 1em 2em;
+    color: white;
+    background-color: black;
+    border: 1px solid white;
+    border-radius: 30%;
+    min-width: 15%;
+    margin-left: 5%;
+    margin-right: 5%;
+    padding: 5% 15% 5% 15%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+
+}
+
+.sab-alert {
+    width: 90%;
+    border: 1px solid white;
 }
