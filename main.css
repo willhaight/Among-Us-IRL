@@ -189,6 +189,9 @@ body {
     background-repeat: none;
     background-position: center;
     background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .report-button {
@@ -359,7 +362,8 @@ body {
 .kill-button p,
 .detect-button p,
 .sniper-button p,
-.sab-button p {
+.sab-button p,
+.emergency-meeting-button p {
     font-size: 4em;
 }
 
@@ -403,7 +407,8 @@ body {
     display: flex;
 }
 
-#fix-sab {
+#fix-sab,
+#end-meeting {
     margin-top: 20px;
     margin-bottom: 20px;
     width: 10%;

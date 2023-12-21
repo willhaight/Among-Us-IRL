@@ -844,6 +844,9 @@ db.collection('among-us-data').doc('globalGameData').onSnapshot(function (doc) {
 
 })
 //die button
+
+
+
 function goDieScreen() {
     document.getElementsByClassName('universalControls')[0].style.display = 'none'
     clearInGameField()
@@ -853,45 +856,45 @@ function goDieScreen() {
     document.getElementsByClassName('task-tracker')[0].style.display = "flex"
     document.getElementsByClassName('game-lost-alert')[0].innerHTML =
         '<h1>YOU ARE DEAD!</h1>'
-    document.getElementsByClassName('player-role-revealer')[0].innerHTML =
-        `<h1 class='gameWinEnd'>Roles</h1>`
-    db.collection("among-us-data").doc("activeGameRoleData").get().then(function (doc) {
-        for (i = 0; i < doc.data().nameRoles.length; i++) {
-            if (doc.data().nameRoles[i].sniper) {
-                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
-                    `<p>${doc.data().nameRoles[i].sniper}: Sniper</p>`
+    if (document.getElementsByClassName('player-role-revealer')[0].innerHTML == "") {
+        document.getElementsByClassName('player-role-revealer')[0].innerHTML =
+            `<h1 class='gameWinEnd'>Roles</h1>`;
+        db.collection("among-us-data").doc("activeGameRoleData").get().then(function (doc) {
+            for (i = 0; i < doc.data().nameRoles.length; i++) {
+                if (doc.data().nameRoles[i].sniper) {
+                    document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                        `<p>${doc.data().nameRoles[i].sniper}: Sniper</p>`
+                }
+                if (doc.data().nameRoles[i].swapper) {
+                    document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                        `<p>${doc.data().nameRoles[i].swapper}: Assassin</p>`
+                }
+                if (doc.data().nameRoles[i].jester) {
+                    document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                        `<p>${doc.data().nameRoles[i].jester}: Jester</p>`
+                }
+                if (doc.data().nameRoles[i].crewmate) {
+                    document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                        `<p>${doc.data().nameRoles[i].crewmate}: Crewmate</p>`
+                }
+                if (doc.data().nameRoles[i].detective) {
+                    document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                        `<p>${doc.data().nameRoles[i].detective}: Detective</p>`
+                }
+                if (doc.data().nameRoles[i].doctor) {
+                    document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                        `<p>${doc.data().nameRoles[i].doctor}: Doctor</p>`
+                }
+                if (doc.data().nameRoles[i].engineer) {
+                    document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
+                        `<p>${doc.data().nameRoles[i].engineer}: Engineer</p>`
+                }
             }
-            if (doc.data().nameRoles[i].swapper) {
-                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
-                    `<p>${doc.data().nameRoles[i].swapper}: Assassin</p>`
-            }
-            if (doc.data().nameRoles[i].jester) {
-                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
-                    `<p>${doc.data().nameRoles[i].jester}: Jester</p>`
-            }
-            if (doc.data().nameRoles[i].crewmate) {
-                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
-                    `<p>${doc.data().nameRoles[i].crewmate}: Crewmate</p>`
-            }
-            if (doc.data().nameRoles[i].detective) {
-                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
-                    `<p>${doc.data().nameRoles[i].detective}: Detective</p>`
-            }
-            if (doc.data().nameRoles[i].doctor) {
-                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
-                    `<p>${doc.data().nameRoles[i].doctor}: Doctor</p>`
-            }
-            if (doc.data().nameRoles[i].engineer) {
-                document.getElementsByClassName('player-role-revealer')[0].innerHTML +=
-                    `<p>${doc.data().nameRoles[i].engineer}: Engineer</p>`
-            }
-        }
-    })
+        })
+    }
     localStorage.setItem('dead', 'dead')
 }
-if (localStorage.getItem('dead')) {
-    goDieScreen()
-}
+
 document.getElementsByClassName('die-button')[0].onclick = function () {
     var userConfirmed = window.confirm("Are you sure that you are dead?");
     if (userConfirmed) {
@@ -966,6 +969,7 @@ function cooldownAll() {
     snipeCooldown()
     sab1Pauser()
     sab2Pauser()
+    emergencyMeetingCooldown()
 }
 function regKillcooldown1() {
     if (killCooldown == false) {
@@ -1443,9 +1447,71 @@ db.collection('among-us-data').doc('sabotage').onSnapshot(function (doc) {
                 localStorage.removeItem('sab2')
             }
         }
+        if (localStorage.getItem('dead')) {
+            goDieScreen()
+        }
     })
 })
 
+//meeting buttons
+//emergency meeting 
+//report button
 
+function emergencyMeetingCooldown() {
+    if (document.getElementsByClassName('emergency-meeting-button')[0].style.opacity = '1') {
+        let timer = gameRoleSetting[2].killCooldown * 1.5;
+        for (x = 0; x < gameRoleSetting[2].killCooldown * 1.5; x++) {
+            (function (currentTimer) {
+                setTimeout(function () {
+                    document.getElementsByClassName('emergency-meeting-button')[0].style.opacity = '45%'
+                    document.getElementsByClassName('emergency-meeting-button')[0].style.flexWrap = 'nowrap'
+                    document.getElementsByClassName('emergency-meeting-button')[0].innerHTML = `<p>${currentTimer - 1}</p>`;
+                    if (currentTimer === 1) {
+                        document.getElementsByClassName('emergency-meeting-button')[0].innerHTML = "";
+                        document.getElementsByClassName('emergency-meeting-button')[0].style.opacity = '100%'
+                    }
+                }, (gameRoleSetting[2].killCooldown * 1.5 - currentTimer) * 1000);
+            })(timer--);
+        }
+    }
+}
 
+document.getElementsByClassName('report-button')[0].onclick = function () {
+    db.collection('among-us-data').doc('meeting-status').update({
+        inMeeting: true
+    })
+}
+document.getElementsByClassName('emergency-meeting-button')[0].onclick = function () {
+    db.collection('among-us-data').doc('meeting-status').update({
+        inMeeting: true
+    })
+}
 
+db.collection('among-us-data').doc('meeting-status').onSnapshot(function (doc) {
+    db.collection('among-us-data').doc('meeting-status').get().then(function (doc2) {
+        if (doc.data().inMeeting == true) {
+            clearInGameField()
+            document.getElementsByClassName('universalControls')[0].style.display = 'none'
+            document.getElementsByClassName('sab-alert')[0].style.display = 'flex'
+            document.getElementsByClassName('sab-explain')[0].innerText = ''
+            document.getElementsByClassName('sab-explain')[0].innerText += 'A Meeting Has Been Called'
+            document.getElementById('fix-sab').style.display = 'none'
+            document.getElementById('end-meeting').style.display = 'flex'
+        } else if (doc.data().inMeeting == false) {
+            document.getElementsByClassName('universalControls')[0].style.display = 'flex'
+            document.getElementsByClassName('sab-alert')[0].style.display = 'none'
+            document.getElementById('fix-sab').style.display = 'flex'
+            document.getElementById('end-meeting').style.display = 'none'
+            cooldownAll()
+        }
+        if (localStorage.getItem('dead')) {
+            goDieScreen()
+        }
+    })
+})
+
+document.getElementById('end-meeting').onclick = function () {
+    db.collection('among-us-data').doc('meeting-status').update({
+        inMeeting: false
+    })
+}
