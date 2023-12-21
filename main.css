@@ -282,6 +282,9 @@ body {
     background-repeat: none;
     background-position: center;
     background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .detect-button {
@@ -355,7 +358,8 @@ body {
 
 .kill-button p,
 .detect-button p,
-.sniper-button p {
+.sniper-button p,
+.sab-button p {
     font-size: 4em;
 }
 

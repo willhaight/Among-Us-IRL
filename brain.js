@@ -964,6 +964,8 @@ function cooldownAll() {
     detectTimer1()
     detectTimer2()
     snipeCooldown()
+    sab1Pauser()
+    sab2Pauser()
 }
 function regKillcooldown1() {
     if (killCooldown == false) {
@@ -1261,6 +1263,7 @@ document.getElementsByClassName('sniper-button')[0].onclick = function () {
 let sab1Trigger = false
 let sab2Trigger = false
 
+
 function sabOptions() {
     if (sab1Trigger == false && sab2Trigger == false) {
         document.getElementsByClassName('sab-selector')[0].style.display = 'flex'
@@ -1275,7 +1278,6 @@ function activateSab1() {
         })
     }
     document.getElementsByClassName('sab-selector')[0].style.display = 'none'
-    sab1Cooldown()
 }
 function activateSab2() {
     let confirmation = window.confirm('Would you like to sabotage Station Two?')
@@ -1285,14 +1287,67 @@ function activateSab2() {
         })
     }
     document.getElementsByClassName('sab-selector')[0].style.display = 'none'
-    sab2Cooldown()
 }
 
 function sab1Cooldown() {
-
+    if (document.getElementsByClassName('sab-button')[0].style.opacity = '1') {
+        let timer = gameRoleSetting[2].killCooldown * 2;
+        sab1Trigger = true
+        for (x = 0; x < gameRoleSetting[2].killCooldown * 2; x++) {
+            (function (currentTimer) {
+                setTimeout(function () {
+                    document.getElementsByClassName('sab-button')[0].style.opacity = '45%'
+                    document.getElementsByClassName('sab-button')[0].style.flexWrap = 'nowrap'
+                    document.getElementsByClassName('sab-button')[0].innerHTML = `<p>${currentTimer - 1}</p>`;
+                    if (currentTimer === 1) {
+                        document.getElementsByClassName('sab-button')[0].innerHTML = "";
+                        document.getElementsByClassName('sab-button')[0].style.opacity = '100%'
+                        sab1Trigger = false
+                    }
+                }, (gameRoleSetting[2].killCooldown * 2 - currentTimer) * 1000);
+            })(timer--);
+        }
+    }
 }
 function sab2Cooldown() {
+    if (document.getElementsByClassName('sab-button')[1].style.opacity = '1') {
+        let timer = gameRoleSetting[2].killCooldown * 2;
+        sab2Trigger = true
+        for (x = 0; x < gameRoleSetting[2].killCooldown * 2; x++) {
+            (function (currentTimer) {
+                setTimeout(function () {
+                    document.getElementsByClassName('sab-button')[1].style.opacity = '45%'
+                    document.getElementsByClassName('sab-button')[1].style.flexWrap = 'nowrap'
+                    document.getElementsByClassName('sab-button')[1].innerHTML = `<p>${currentTimer - 1}</p>`;
+                    if (currentTimer === 1) {
+                        document.getElementsByClassName('sab-button')[1].innerHTML = "";
+                        document.getElementsByClassName('sab-button')[1].style.opacity = '100%'
+                        sab2Trigger = false
+                    }
+                }, (gameRoleSetting[2].killCooldown * 2 - currentTimer) * 1000);
+            })(timer--);
+        }
+    }
+}
+function sab1Pauser() {
+    if (document.getElementsByClassName('sab-button')[0].style.opacity = '1') {
+        document.getElementsByClassName('sab-button')[0].style.opacity = '45%'
+        sab1Trigger = true;
+    }
+    else if (document.getElementsByClassName('sab-button')[0].style.opacity = '.45') {
+        document.getElementsByClassName('sab-button')[0].style.opacity = '100%'
 
+    }
+}
+function sab2Pauser() {
+    if (document.getElementsByClassName('sab-button')[1].style.opacity = '1') {
+        document.getElementsByClassName('sab-button')[1].style.opacity = '45%'
+        sab2Trigger = true;
+    }
+    else if (document.getElementsByClassName('sab-button')[1].style.opacity = '.45') {
+        document.getElementsByClassName('sab-button')[1].style.opacity = '100%'
+
+    }
 }
 
 document.getElementsByClassName('sab-button')[0].onclick = function () {
@@ -1328,6 +1383,8 @@ document.getElementById('fix-sab').onclick = function () {
     })
 }
 
+//detecting Sabotages
+
 db.collection('among-us-data').doc('sabotage').onSnapshot(function (doc) {
     db.collection('among-us-data').doc('sabotage').get().then(function (doc2) {
         if (doc.data().statusOne == true && myAssignedRole != 'assassin' && myAssignedRole != 'sniper') {
@@ -1358,12 +1415,18 @@ db.collection('among-us-data').doc('sabotage').onSnapshot(function (doc) {
             }
         }
         if (doc.data().statusOne == true && (myAssignedRole == 'assassin' || myAssignedRole == 'sniper')) {
+            sab1Pauser()
+            sab2Pauser()
             document.getElementsByClassName('sab-alert')[0].style.display = 'flex'
             document.getElementsByClassName('sab-explain')[0].innerText = ''
             document.getElementsByClassName('sab-explain')[0].innerText += 'STATION ONE has been sabotaged!'
         } else if (doc.data().statusOne == false && (myAssignedRole == 'assassin' || myAssignedRole == 'sniper')) {
+            sab1Pauser()
+            sab2Pauser()
             document.getElementsByClassName('sab-alert')[0].style.display = 'none'
             if (doc.data().statusTwo > 0 && (myAssignedRole == 'assassin' || myAssignedRole == 'sniper')) {
+                sab1Pauser()
+                sab2Pauser()
                 document.getElementsByClassName('sab-alert')[0].style.display = 'flex'
                 document.getElementsByClassName('sab-explain')[0].innerText = ''
                 document.getElementsByClassName('sab-explain')[0].innerText += 'STATION TWO has been sabotaged!'
@@ -1371,6 +1434,10 @@ db.collection('among-us-data').doc('sabotage').onSnapshot(function (doc) {
                     document.getElementById('fix-sab').style.display = 'none'
                 }
             } else if (doc.data().statusTwo == 0 && (myAssignedRole == 'assassin' || myAssignedRole == 'sniper')) {
+                sab1Trigger = false
+                sab2Trigger = false
+                sab1Cooldown()
+                sab2Cooldown()
                 document.getElementById('fix-sab').style.display = "flex"
                 document.getElementsByClassName('sab-alert')[0].style.display = 'none'
                 localStorage.removeItem('sab2')
