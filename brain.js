@@ -846,7 +846,6 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
                         localStorage.setItem('tasksCompleted', totalTasksCompleted)
                         if (totalTasksCompleted == gameRoleSetting[3].tasks) {
                             localStorage.setItem('Tasks', '<p>Tasks Completed!</p>')
-                            localStorage.setItem('tasksCompleted', "<p>Tasks Completed!</p>")
                         }
                         db.collection('among-us-data').doc('globalGameData').update({
                             taskTotal: doc.data().taskTotal - 1
@@ -926,6 +925,21 @@ function goDieScreen() {
                 })
             })
         }
+        if (myAssignedRole == "crewmate" || myAssignedRole == "doctor"
+            || myAssignedRole == "engineer" || myAssignedRole == "detective") {
+            db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
+                if (localStorage.getItem('tasksCompleted')) {
+                    db.collection('among-us-data').doc('globalGameData').update({
+                        taskTotal: doc.data().taskTotal - (gameRoleSetting[3].tasks - parseInt(localStorage.getItem('tasksCompleted')))
+                    })
+
+                } else if (!localStorage.getItem('tasksCompleted')) {
+                    db.collection('among-us-data').doc('globalGameData').update({
+                        taskTotal: doc.data().taskTotal - gameRoleSetting[3].tasks
+                    })
+                }
+            })
+        }
     }
     localStorage.setItem('dead', 'dead')
 }
@@ -952,21 +966,6 @@ document.getElementsByClassName('die-button')[0].onclick = function () {
         })
     } else {
 
-    }
-    if (myAssignedRole == "crewmate" || myAssignedRole == "doctor"
-        || myAssignedRole == "engineer" || myAssignedRole == "detective") {
-        db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
-            if (localStorage.getItem('tasksCompleted')) {
-                db.collection('among-us-data').doc('globalGameData').update({
-                    taskTotal: doc.data().taskTotal - (gameRoleSetting[3].tasks - parseInt(localStorage.getItem('tasksCompleted')))
-                })
-
-            } else {
-                db.collection('among-us-data').doc('globalGameData').update({
-                    taskTotal: doc.data().taskTotal - gameRoleSetting[3].tasks
-                })
-            }
-        })
     }
     // if (myAssignedRole == "crewmate" || myAssignedRole == "doctor"
     //     || myAssignedRole == "engineer" || myAssignedRole == "detective"
