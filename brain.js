@@ -490,24 +490,27 @@ gameButtonInputList2[9].onclick = function () {
 
 //start game
 document.getElementById('startGame').onclick = function () {
-    if (gameRoleSetting[10].players >= gameRoleSetting[0].snipers +
-        gameRoleSetting[1].swappers + gameRoleSetting[4].detectives +
-        gameRoleSetting[6].priests + gameRoleSetting[8].engineers +
-        gameRoleSetting[9].jesters) {
-        document.getElementById('gameSettingErrorField').innerHTML = ""
-        document.getElementById('createfield').style.display = "none"
-        document.getElementById('inGameField').style.display = "flex"
-        scrambleRoles()
-        db.collection('among-us-data').doc('globalGameData').update({
-            taskTotal: (gameRoleSetting[10].players - gameRoleSetting[0].snipers -
-                gameRoleSetting[1].swappers - gameRoleSetting[9].jesters) * gameRoleSetting[3].tasks
-        })
-        db.collection('among-us-data').doc('liveRoleCounts').update({
-            crewmates: gameRoleSetting[10].players - (gameRoleSetting[1].swappers + gameRoleSetting[0].snipers),
-            imposters: gameRoleSetting[1].swappers + gameRoleSetting[0].snipers
-        })
-    } else {
-        document.getElementById('gameSettingErrorField').innerHTML = "<p>Numbers dont match</p>"
+    let windowAlert = window.confirm('Would you like to start the game?')
+    if (windowAlert) {
+        if (gameRoleSetting[10].players >= gameRoleSetting[0].snipers +
+            gameRoleSetting[1].swappers + gameRoleSetting[4].detectives +
+            gameRoleSetting[6].priests + gameRoleSetting[8].engineers +
+            gameRoleSetting[9].jesters) {
+            document.getElementById('gameSettingErrorField').innerHTML = ""
+            document.getElementById('createfield').style.display = "none"
+            document.getElementById('inGameField').style.display = "flex"
+            scrambleRoles()
+            db.collection('among-us-data').doc('globalGameData').update({
+                taskTotal: (gameRoleSetting[10].players - gameRoleSetting[0].snipers -
+                    gameRoleSetting[1].swappers - gameRoleSetting[9].jesters) * gameRoleSetting[3].tasks
+            })
+            db.collection('among-us-data').doc('liveRoleCounts').update({
+                crewmates: gameRoleSetting[10].players - (gameRoleSetting[1].swappers + gameRoleSetting[0].snipers),
+                imposters: gameRoleSetting[1].swappers + gameRoleSetting[0].snipers
+            })
+        } else {
+            document.getElementById('gameSettingErrorField').innerHTML = "<p>Numbers dont match</p>"
+        }
     }
 }
 
@@ -1478,14 +1481,20 @@ function emergencyMeetingCooldown() {
 }
 
 document.getElementsByClassName('report-button')[0].onclick = function () {
-    db.collection('among-us-data').doc('meeting-status').update({
-        inMeeting: true
-    })
+    let windowAlert = window.confirm('Are you sure you want to report a body?')
+    if (windowAlert) {
+        db.collection('among-us-data').doc('meeting-status').update({
+            inMeeting: true
+        })
+    }
 }
 document.getElementsByClassName('emergency-meeting-button')[0].onclick = function () {
-    db.collection('among-us-data').doc('meeting-status').update({
-        inMeeting: true
-    })
+    let windowAlert = window.confirm('Are you sure you want to call and Emergency Meeting?')
+    if (windowAlert) {
+        db.collection('among-us-data').doc('meeting-status').update({
+            inMeeting: true
+        })
+    }
 }
 
 db.collection('among-us-data').doc('meeting-status').onSnapshot(function (doc) {
@@ -1514,9 +1523,12 @@ db.collection('among-us-data').doc('meeting-status').onSnapshot(function (doc) {
 })
 
 document.getElementById('end-meeting').onclick = function () {
-    db.collection('among-us-data').doc('meeting-status').update({
-        inMeeting: false
-    })
+    let windowAlert = window.confirm('Are you sure you want to end the meeting?')
+    if (windowAlert) {
+        db.collection('among-us-data').doc('meeting-status').update({
+            inMeeting: false
+        })
+    }
 }
 //
 //winning and losing
@@ -1536,6 +1548,18 @@ function gameWin() {
     db.collection("among-us-data").doc('liveRoleCounts').update({
         crewmates: 100,
         imposters: 10
+    })
+    db.collection('among-us-data').doc('sabotage').get().then(function (doc2) {
+        if (doc2.data().statusOne == true) {
+            db.collection('among-us-data').doc('sabotage').update({
+                statusOne: false
+            })
+        }
+        if (doc2.data().statusTwo > 0) {
+            db.collection('among-us-data').doc('sabotage').update({
+                statusTwo: 0
+            })
+        }
     })
 }
 function gameLost() {
