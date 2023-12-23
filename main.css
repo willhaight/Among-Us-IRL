@@ -231,7 +231,8 @@ body {
 .assassin-controls,
 .detective-controls,
 .engineer-controls,
-.doctor-controls {
+.doctor-controls,
+.jester-controls {
     width: 90%;
     border: 1px solid white;
     display: flex;
@@ -244,7 +245,8 @@ body {
 .sniper-controls div,
 .assassin-controls div,
 .detective-controls div,
-.engineer-controls div {
+.engineer-controls div,
+.jester-controls div {
     border: solid 1px white;
     border-radius: 50%;
     height: 100px;
@@ -271,6 +273,17 @@ body {
 .sniper-button {
     padding: 30px 30px 30px 30px;
     background-image: url('src/snipe-button.PNG');
+    background-repeat: none;
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.jester-win-button {
+    padding: 30px 30px 30px 30px;
+    background-image: url('src/jester-win-button.PNG');
     background-repeat: none;
     background-position: center;
     background-size: cover;

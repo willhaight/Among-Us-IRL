@@ -25,6 +25,36 @@ function addCollection(collName, data) {
 }
 
 function loadUsers() {
+    if (gameRoleSetting[3].tasks < 0) {
+        gameRoleSetting[3].tasks = 0
+    }
+    if (gameRoleSetting[4].detectives < 0) {
+        gameRoleSetting[4].detectives = 0
+    }
+    if (gameRoleSetting[5].detectiveChecks < 0) {
+        gameRoleSetting[5].detectiveChecks = 0
+    }
+    if (gameRoleSetting[6].priests < 0) {
+        gameRoleSetting[6].priests = 0
+    }
+    if (gameRoleSetting[7].priestChecks < 0) {
+        gameRoleSetting[7].priestChecks = 0
+    }
+    if (gameRoleSetting[8].engineers < 0) {
+        gameRoleSetting[8].engineers = 0
+    }
+    if (gameRoleSetting[0].snipers < 0) {
+        gameRoleSetting[0].snipers = 0
+    }
+    if (gameRoleSetting[1].swappers < 0) {
+        gameRoleSetting[1].swappers = 0
+    }
+    if (gameRoleSetting[2].killCooldown < 5) {
+        gameRoleSetting[2].killCooldown = 5
+    }
+    if (gameRoleSetting[9].jesters < 0) {
+        gameRoleSetting[9].jesters = 0
+    }
     db.collection("among-us-data").doc('users').get()
         .then(function (doc) {
             if (doc.exists) {
@@ -91,6 +121,7 @@ function clearInGameField() {
     document.getElementsByClassName('engineer-controls')[0].style.display = "none"
     document.getElementsByClassName('doctor-controls')[0].style.display = "none"
     document.getElementsByClassName('detective-controls')[0].style.display = "none"
+    document.getElementsByClassName('jester-controls')[0].style.display = "none"
     document.getElementsByClassName('sab-alert')[0].style.display = "none"
     document.getElementsByClassName('report-alert')[0].style.display = "none"
     document.getElementsByClassName('game-won-alert')[0].style.display = "none"
@@ -296,7 +327,7 @@ let gameRoleSetting = [
     { jesters: 0 },
     { players: 0 }
 ]
-db.collection("among-us-data").doc("gameSettings").get().then(function (doc) {
+db.collection("among-us-data").doc("gameSettings").onSnapshot(function (doc) {
     gameRoleSetting[3].tasks = doc.data().tasks
     gameRoleSetting[4].detectives = doc.data().detectives
     gameRoleSetting[5].detectiveChecks = doc.data().detectiveChecks
@@ -307,6 +338,7 @@ db.collection("among-us-data").doc("gameSettings").get().then(function (doc) {
     gameRoleSetting[1].swappers = doc.data().swappers
     gameRoleSetting[2].killCooldown = doc.data().killCooldown
     gameRoleSetting[9].jesters = doc.data().jesters
+    loadUsers()
 })
 let gameButtonInputList = document.getElementsByClassName('minus-input')
 let gameButtonInputList2 = document.getElementsByClassName('plus-input')
@@ -468,7 +500,11 @@ document.getElementById('startGame').onclick = function () {
         scrambleRoles()
         db.collection('among-us-data').doc('globalGameData').update({
             taskTotal: (gameRoleSetting[10].players - gameRoleSetting[0].snipers -
-                gameRoleSetting[1].swappers) * gameRoleSetting[3].tasks
+                gameRoleSetting[1].swappers - gameRoleSetting[9].jesters) * gameRoleSetting[3].tasks
+        })
+        db.collection('among-us-data').doc('liveRoleCounts').update({
+            crewmates: gameRoleSetting[10].players - (gameRoleSetting[1].swappers + gameRoleSetting[0].snipers),
+            imposters: gameRoleSetting[1].swappers + gameRoleSetting[0].snipers
         })
     } else {
         document.getElementById('gameSettingErrorField').innerHTML = "<p>Numbers dont match</p>"
@@ -566,6 +602,7 @@ function retrieveRole() {
             document.getElementsByClassName('engineer-controls')[0].style.display = "none"
             document.getElementsByClassName('doctor-controls')[0].style.display = "none"
             document.getElementsByClassName('detective-controls')[0].style.display = "none"
+            document.getElementsByClassName('jester-controls')[0].style.display = "none"
             document.getElementsByClassName('sab-alert')[0].style.display = "none"
             document.getElementsByClassName('report-alert')[0].style.display = "none"
             document.getElementsByClassName('game-won-alert')[0].style.display = "none"
@@ -671,6 +708,7 @@ document.getElementsByClassName('assassin-controls')[0].style.display = "none"
 document.getElementsByClassName('engineer-controls')[0].style.display = "none"
 document.getElementsByClassName('doctor-controls')[0].style.display = "none"
 document.getElementsByClassName('detective-controls')[0].style.display = "none"
+document.getElementsByClassName('jester-controls')[0].style.display = "none"
 document.getElementsByClassName('sab-alert')[0].style.display = "none"
 document.getElementsByClassName('report-alert')[0].style.display = "none"
 document.getElementsByClassName('game-won-alert')[0].style.display = "none"
@@ -687,10 +725,8 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
     if (myAssignedRole == "crewmate") {
         if (document.getElementsByClassName('task-status')[0].style.display == "none") {
             document.getElementsByClassName('task-status')[0].style.display = "flex"
-            console.log('flex it')
         } else {
             document.getElementsByClassName('task-status')[0].style.display = "none"
-            console.log('none it')
         }
     }
     else if (myAssignedRole == "sniper") {
@@ -740,7 +776,11 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
         }
     }
     else if (myAssignedRole == "jester") {
-        console.log('jester click')
+        if (document.getElementsByClassName("jester-controls")[0].style.display == "none") {
+            document.getElementsByClassName("jester-controls")[0].style.display = "flex"
+        } else {
+            document.getElementsByClassName("jester-controls")[0].style.display = "none"
+        }
     }
     else if (myAssignedRole == "engineer") {
         if (document.getElementsByClassName("engineer-controls")[0].style.display == "none") {
@@ -821,31 +861,8 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
         }
     }
 }
-//task win condition
-db.collection('among-us-data').doc('globalGameData').onSnapshot(function (doc) {
-    if (doc.data().taskTotal == 0 &&
-        (myAssignedRole == "crewmate" || myAssignedRole == "doctor"
-            || myAssignedRole == "engineer" || myAssignedRole == "detective")) {
-        document.getElementsByClassName('universalControls')[0].style.display = 'none'
-        clearInGameField()
-        document.getElementsByClassName('game-won-alert')[0].style.display = 'flex'
-        document.getElementsByClassName('game-won-alert')[0].innerHTML =
-            "<h1 class='gameWinEnd'>VICTORY!</h1>"
-    }
-    if (doc.data().taskTotal == 0 &&
-        (myAssignedRole == "sniper" || myAssignedRole == "assassin"
-            || myAssignedRole == "jester")) {
-        document.getElementsByClassName('universalControls')[0].style.display = 'none'
-        clearInGameField()
-        document.getElementsByClassName('game-lost-alert')[0].style.display = 'flex'
-        document.getElementsByClassName('game-lost-alert')[0].innerHTML =
-            "<h1 class='gameLossEnd'>DEFEAT!</h1>"
-    }
 
-})
 //die button
-
-
 
 function goDieScreen() {
     document.getElementsByClassName('universalControls')[0].style.display = 'none'
@@ -892,10 +909,35 @@ function goDieScreen() {
             }
         })
     }
+    if (!localStorage.getItem('dead')) {
+        if (myAssignedRole == "crewmate" || myAssignedRole == "doctor"
+            || myAssignedRole == "engineer" || myAssignedRole == "detective"
+            || myAssignedRole == 'jester') {
+            db.collection('among-us-data').doc('liveRoleCounts').get().then(function (doc) {
+                db.collection('among-us-data').doc('liveRoleCounts').update({
+                    crewmates: doc.data().crewmates - 1
+                })
+            })
+        }
+        if (myAssignedRole == "sniper" || myAssignedRole == "assassin") {
+            db.collection('among-us-data').doc('liveRoleCounts').get().then(function (doc) {
+                db.collection('among-us-data').doc('liveRoleCounts').update({
+                    imposters: doc.data().imposters - 1
+                })
+            })
+        }
+    }
     localStorage.setItem('dead', 'dead')
 }
 
 document.getElementsByClassName('die-button')[0].onclick = function () {
+    db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
+        db.collection('among-us-data').doc('users').get().then(function (doc2) {
+            for (i = 0; i < doc.data().vitals.length; i++) {
+                liveVitals.push([doc2.data().names[i], doc.data().vitals[i]])
+            }
+        })
+    })
     var userConfirmed = window.confirm("Are you sure that you are dead?");
     if (userConfirmed) {
         let tempArr = []
@@ -926,6 +968,22 @@ document.getElementsByClassName('die-button')[0].onclick = function () {
             }
         })
     }
+    // if (myAssignedRole == "crewmate" || myAssignedRole == "doctor"
+    //     || myAssignedRole == "engineer" || myAssignedRole == "detective"
+    //     || myAssignedRole == 'jester') {
+    //     db.collection('among-us-data').doc('liveRoleCounts').get().then(function (doc) {
+    //         db.collection('among-us-data').doc('liveRoleCounts').update({
+    //             crewmates: doc.data().crewmates - 1
+    //         })
+    //     })
+    // }
+    // if (myAssignedRole == "sniper" || myAssignedRole == "assassin") {
+    //     db.collection('among-us-data').doc('liveRoleCounts').get().then(function (doc) {
+    //         db.collection('among-us-data').doc('liveRoleCounts').update({
+    //             imposters: doc.data().imposters - 1
+    //         })
+    //     })
+    // }
 }
 //updating vitals
 db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
@@ -936,6 +994,11 @@ db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
     })
 }).then(function () {
     db.collection('among-us-data').doc('globalGameData').onSnapshot(function (doc) {
+        if (doc.data().taskTotal == ((gameRoleSetting[10].players - gameRoleSetting[0].snipers -
+            gameRoleSetting[1].swappers) * gameRoleSetting[3].tasks) - 1) {
+            sab1Cooldown()
+            sab2Cooldown()
+        }
         document.getElementsByClassName('vital-tracker')[0].innerHTML = ''
         for (i = 0; i < doc.data().vitals.length; i++) {
             liveVitals[i][1] = doc.data().vitals[i]
@@ -1354,6 +1417,8 @@ function sab2Pauser() {
     }
 }
 
+
+
 document.getElementsByClassName('sab-button')[0].onclick = function () {
     sabOptions()
 }
@@ -1371,25 +1436,209 @@ document.getElementsByClassName('sab-option')[1].onclick = function () {
 }
 
 document.getElementById('fix-sab').onclick = function () {
-    db.collection('among-us-data').doc('sabotage').get().then(function (doc2) {
-        if (doc2.data().statusOne == true) {
-            db.collection('among-us-data').doc('sabotage').update({
-                statusOne: false
-            })
+    let windowConfirm = window.confirm('Have you fixed the sabotage?')
+    if (windowConfirm) {
+        db.collection('among-us-data').doc('sabotage').get().then(function (doc2) {
+            if (doc2.data().statusOne == true) {
+                db.collection('among-us-data').doc('sabotage').update({
+                    statusOne: false
+                })
+            }
+            if (doc2.data().statusTwo > 0) {
+                db.collection('among-us-data').doc('sabotage').update({
+                    statusTwo: doc2.data().statusTwo - 1
+                })
+                document.getElementById('fix-sab').style.display = 'none'
+                localStorage.setItem('sab2', 'true')
+            }
+        })
+    }
+}
+
+//meeting buttons
+//emergency meeting 
+//report button
+
+function emergencyMeetingCooldown() {
+    if (document.getElementsByClassName('emergency-meeting-button')[0].style.opacity = '1') {
+        let timer = Math.trunc(gameRoleSetting[2].killCooldown * 1.5);
+        for (x = 0; x < Math.trunc(gameRoleSetting[2].killCooldown * 1.5); x++) {
+            (function (currentTimer) {
+                setTimeout(function () {
+                    document.getElementsByClassName('emergency-meeting-button')[0].style.opacity = '45%'
+                    document.getElementsByClassName('emergency-meeting-button')[0].style.flexWrap = 'nowrap'
+                    document.getElementsByClassName('emergency-meeting-button')[0].innerHTML = `<p>${currentTimer - 1}</p>`;
+                    if (currentTimer === 1) {
+                        document.getElementsByClassName('emergency-meeting-button')[0].innerHTML = "";
+                        document.getElementsByClassName('emergency-meeting-button')[0].style.opacity = '100%'
+                    }
+                }, (Math.trunc(gameRoleSetting[2].killCooldown * 1.5) - currentTimer) * 1000);
+            })(timer--);
         }
-        if (doc2.data().statusTwo > 0) {
-            db.collection('among-us-data').doc('sabotage').update({
-                statusTwo: doc2.data().statusTwo - 1
-            })
+    }
+}
+
+document.getElementsByClassName('report-button')[0].onclick = function () {
+    db.collection('among-us-data').doc('meeting-status').update({
+        inMeeting: true
+    })
+}
+document.getElementsByClassName('emergency-meeting-button')[0].onclick = function () {
+    db.collection('among-us-data').doc('meeting-status').update({
+        inMeeting: true
+    })
+}
+
+db.collection('among-us-data').doc('meeting-status').onSnapshot(function (doc) {
+    db.collection('among-us-data').doc('meeting-status').get().then(function (doc2) {
+        if (doc.data().inMeeting == true) {
+            clearInGameField()
+            document.getElementsByClassName('universalControls')[0].style.display = 'none'
+            document.getElementsByClassName('sab-alert')[0].style.display = 'flex'
+            document.getElementsByClassName('sab-explain')[0].innerText = ''
+            document.getElementsByClassName('sab-explain')[0].innerText += 'A Meeting Has Been Called'
             document.getElementById('fix-sab').style.display = 'none'
-            localStorage.setItem('sab2', 'true')
+            document.getElementById('end-meeting').style.display = 'flex'
+        } else if (doc.data().inMeeting == false) {
+            document.getElementsByClassName('universalControls')[0].style.display = 'flex'
+            document.getElementsByClassName('sab-alert')[0].style.display = 'none'
+            document.getElementById('fix-sab').style.display = 'flex'
+            document.getElementById('end-meeting').style.display = 'none'
+            cooldownAll()
+            sab1Cooldown()
+            sab2Cooldown()
+        }
+        if (localStorage.getItem('dead')) {
+            goDieScreen()
         }
     })
+})
+
+document.getElementById('end-meeting').onclick = function () {
+    db.collection('among-us-data').doc('meeting-status').update({
+        inMeeting: false
+    })
+}
+//
+//winning and losing
+//
+
+function gameWin() {
+    db.collection("among-us-data").doc('activeGameRoleData').update({
+        nameRoles: ''
+    }).then(function () {
+        document.getElementsByClassName('createfield')[0].style.display = 'none'
+        document.getElementsByClassName('universalControls')[0].style.display = 'none'
+        clearInGameField()
+        document.getElementsByClassName('game-won-alert')[0].style.display = 'flex'
+        document.getElementsByClassName('game-won-alert')[0].innerHTML =
+            "<h1 class='gameWinEnd'>VICTORY!</h1>"
+    })
+    db.collection("among-us-data").doc('liveRoleCounts').update({
+        crewmates: 100,
+        imposters: 10
+    })
+}
+function gameLost() {
+    db.collection("among-us-data").doc('activeGameRoleData').update({
+        nameRoles: ''
+    }).then(function () {
+        document.getElementsByClassName('createfield')[0].style.display = 'none'
+        document.getElementsByClassName('universalControls')[0].style.display = 'none'
+        clearInGameField()
+        document.getElementsByClassName('game-lost-alert')[0].style.display = 'flex'
+        document.getElementsByClassName('game-lost-alert')[0].innerHTML =
+            "<h1 class='gameLossEnd'>DEFEAT!</h1>"
+    })
+    db.collection("among-us-data").doc('liveRoleCounts').update({
+        crewmates: 100,
+        imposters: 10
+    })
+}
+
+document.getElementsByClassName('game-won-alert')[0].onclick = function () {
+    db.collection("among-us-data").doc("users").update({
+        names: firebase.firestore.FieldValue.arrayRemove(myUser)
+    })
+    location.reload()
+}
+document.getElementsByClassName('game-lost-alert')[0].onclick = function () {
+    db.collection("among-us-data").doc("users").update({
+        names: firebase.firestore.FieldValue.arrayRemove(myUser)
+    })
+    location.reload()
+}
+
+//task win condition
+db.collection('among-us-data').doc('globalGameData').onSnapshot(function (doc) {
+    if (doc.data().taskTotal == 0 &&
+        (myAssignedRole == "crewmate" || myAssignedRole == "doctor"
+            || myAssignedRole == "engineer" || myAssignedRole == "detective")) {
+        console.log(myAssignedRole, 'task win')
+        gameWin()
+    }
+    if (doc.data().taskTotal == 0 &&
+        (myAssignedRole == "sniper" || myAssignedRole == "assassin"
+            || myAssignedRole == "jester")) {
+        console.log(myAssignedRole, 'task loss')
+        gameLost()
+    }
+
+})
+//Imposter Win Condition and jester win condition
+db.collection('among-us-data').doc('liveRoleCounts').onSnapshot(function (doc) {
+    if (doc.data().imposters >= doc.data().crewmates &&
+        (myAssignedRole == "sniper" || myAssignedRole == "assassin")) {
+        console.log(myAssignedRole, 'death win')
+        gameWin()
+    }
+    if (doc.data().imposters >= doc.data().crewmates &&
+        (myAssignedRole == "crewmate" || myAssignedRole == "engineer" ||
+            myAssignedRole == "doctor" || myAssignedRole == "detective" ||
+            myAssignedRole == "jester")) {
+        console.log(myAssignedRole, 'death loss')
+        gameLost()
+    }
+    if (doc.data().imposters == 0 &&
+        (myAssignedRole == "sniper" || myAssignedRole == "assassin")) {
+        console.log(myAssignedRole, 'death loss')
+        gameLost()
+    }
+    if (doc.data().imposters == 0 &&
+        (myAssignedRole == "crewmate" || myAssignedRole == "engineer" ||
+            myAssignedRole == "doctor" || myAssignedRole == "detective" ||
+            myAssignedRole == "jester")) {
+        console.log(myAssignedRole, 'death win')
+        gameWin()
+    }
+    if (doc.data().imposters == 69 && doc.data().crewmates == 420 &&
+        myAssignedRole == "jester") {
+        console.log(myAssignedRole, 'jest win')
+        gameWin()
+    }
+    if (doc.data().imposters == 69 && doc.data().crewmates == 420 &&
+        myAssignedRole != "jester") {
+        console.log(myAssignedRole, 'jest loss')
+        gameLost()
+    }
+})
+
+//jester win button
+
+document.getElementsByClassName('jester-win-button')[0].onclick = function () {
+    let windowAlert = window.confirm('Has the Jester laughed his way to Victory?')
+    if (windowAlert) {
+        db.collection('among-us-data').doc('liveRoleCounts').update({
+            crewmates: 420,
+            imposters: 69
+        })
+    }
 }
 
 //detecting Sabotages
 
 db.collection('among-us-data').doc('sabotage').onSnapshot(function (doc) {
+    console.log('snapped', doc.data().statusOne)
     db.collection('among-us-data').doc('sabotage').get().then(function (doc2) {
         if (doc.data().statusOne == true && myAssignedRole != 'assassin' && myAssignedRole != 'sniper') {
             clearInGameField()
@@ -1452,66 +1701,3 @@ db.collection('among-us-data').doc('sabotage').onSnapshot(function (doc) {
         }
     })
 })
-
-//meeting buttons
-//emergency meeting 
-//report button
-
-function emergencyMeetingCooldown() {
-    if (document.getElementsByClassName('emergency-meeting-button')[0].style.opacity = '1') {
-        let timer = gameRoleSetting[2].killCooldown * 1.5;
-        for (x = 0; x < gameRoleSetting[2].killCooldown * 1.5; x++) {
-            (function (currentTimer) {
-                setTimeout(function () {
-                    document.getElementsByClassName('emergency-meeting-button')[0].style.opacity = '45%'
-                    document.getElementsByClassName('emergency-meeting-button')[0].style.flexWrap = 'nowrap'
-                    document.getElementsByClassName('emergency-meeting-button')[0].innerHTML = `<p>${currentTimer - 1}</p>`;
-                    if (currentTimer === 1) {
-                        document.getElementsByClassName('emergency-meeting-button')[0].innerHTML = "";
-                        document.getElementsByClassName('emergency-meeting-button')[0].style.opacity = '100%'
-                    }
-                }, (gameRoleSetting[2].killCooldown * 1.5 - currentTimer) * 1000);
-            })(timer--);
-        }
-    }
-}
-
-document.getElementsByClassName('report-button')[0].onclick = function () {
-    db.collection('among-us-data').doc('meeting-status').update({
-        inMeeting: true
-    })
-}
-document.getElementsByClassName('emergency-meeting-button')[0].onclick = function () {
-    db.collection('among-us-data').doc('meeting-status').update({
-        inMeeting: true
-    })
-}
-
-db.collection('among-us-data').doc('meeting-status').onSnapshot(function (doc) {
-    db.collection('among-us-data').doc('meeting-status').get().then(function (doc2) {
-        if (doc.data().inMeeting == true) {
-            clearInGameField()
-            document.getElementsByClassName('universalControls')[0].style.display = 'none'
-            document.getElementsByClassName('sab-alert')[0].style.display = 'flex'
-            document.getElementsByClassName('sab-explain')[0].innerText = ''
-            document.getElementsByClassName('sab-explain')[0].innerText += 'A Meeting Has Been Called'
-            document.getElementById('fix-sab').style.display = 'none'
-            document.getElementById('end-meeting').style.display = 'flex'
-        } else if (doc.data().inMeeting == false) {
-            document.getElementsByClassName('universalControls')[0].style.display = 'flex'
-            document.getElementsByClassName('sab-alert')[0].style.display = 'none'
-            document.getElementById('fix-sab').style.display = 'flex'
-            document.getElementById('end-meeting').style.display = 'none'
-            cooldownAll()
-        }
-        if (localStorage.getItem('dead')) {
-            goDieScreen()
-        }
-    })
-})
-
-document.getElementById('end-meeting').onclick = function () {
-    db.collection('among-us-data').doc('meeting-status').update({
-        inMeeting: false
-    })
-}
