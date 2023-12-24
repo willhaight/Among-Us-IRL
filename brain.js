@@ -289,19 +289,19 @@ document.getElementById('deleteLobby').onclick = function () {
     })
 }
 
-document.getElementById("leaveLobby2").onclick = function () {
-    db.collection("among-us-data").doc('activeGameRoleData').update({
-        nameRoles: ''
-    })
-        .then(() => {
-            // Code to execute after the update operation is completed
-            location.reload()
-        })
-        .catch((error) => {
-            // Handle errors if the update operation fails
-            console.error("Error updating document:", error);
-        });
-}
+// document.getElementById("leaveLobby2").onclick = function () {
+//     db.collection("among-us-data").doc('activeGameRoleData').update({
+//         nameRoles: ''
+//     })
+//         .then(() => {
+//             // Code to execute after the update operation is completed
+//             location.reload()
+//         })
+//         .catch((error) => {
+//             // Handle errors if the update operation fails
+//             console.error("Error updating document:", error);
+//         });
+// }
 let listedUsers = []
 db.collection('among-us-data').doc('users').get().then(function (doc) {
     listedUsers = doc.data().names
