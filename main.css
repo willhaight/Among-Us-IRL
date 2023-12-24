@@ -15,7 +15,7 @@ body,
     width: 70%;
     padding-bottom: 10%;
     padding-top: 10%;
-    background-image: url('src/among-us-stars.png');
+    background-image: url('/src/among-us-stars.png');
     background-repeat: none;
     background-position: center;
     display: flex;
@@ -26,7 +26,7 @@ body,
 }
 
 body {
-    background-image: url('src/among-us-stars.png');
+    background-image: url('/src/among-us-stars.png');
     background-repeat: none;
     background-position: center;
 }
@@ -185,7 +185,7 @@ body {
 
 .emergency-meeting-button {
     padding: 30px 30px 30px 30px;
-    background-image: url('src/emergency-meeting.PNG');
+    background-image: url('/src/emergency-meeting.PNG');
     background-repeat: none;
     background-position: center;
     background-size: cover;
@@ -196,7 +196,7 @@ body {
 
 .report-button {
     padding: 30px 30px 30px 30px;
-    background-image: url('src/among-us-report.PNG');
+    background-image: url('/src/among-us-report.PNG');
     background-repeat: none;
     background-position: center;
     background-size: cover;
@@ -204,7 +204,7 @@ body {
 
 .die-button {
     padding: 30px 30px 30px 30px;
-    background-image: url('src/die-button.PNG');
+    background-image: url('/src/die-button.PNG');
     background-repeat: none;
     background-position: center;
     background-size: cover;
@@ -212,7 +212,7 @@ body {
 
 .role-button {
     padding: 30px 30px 30px 30px;
-    background-image: url('src/role-reveal-button.PNG');
+    background-image: url('/src/role-reveal-button.PNG');
     background-repeat: none;
     background-position: center;
     background-size: cover;
@@ -261,7 +261,7 @@ body {
 
 .kill-button {
     padding: 30px 30px 30px 30px;
-    background-image: url('src/kill-button.PNG');
+    background-image: url('/src/kill-button.PNG');
     background-repeat: none;
     background-position: center;
     background-size: cover;
@@ -272,7 +272,7 @@ body {
 
 .sniper-button {
     padding: 30px 30px 30px 30px;
-    background-image: url('src/snipe-button.PNG');
+    background-image: url('/src/snipe-button.PNG');
     background-repeat: none;
     background-position: center;
     background-size: cover;
@@ -283,7 +283,7 @@ body {
 
 .jester-win-button {
     padding: 30px 30px 30px 30px;
-    background-image: url('src/jester-win-button.PNG');
+    background-image: url('/src/jester-win-button.PNG');
     background-repeat: none;
     background-position: center;
     background-size: cover;
@@ -294,7 +294,7 @@ body {
 
 .sab-button {
     padding: 30px 30px 30px 30px;
-    background-image: url('src/sab-button.PNG');
+    background-image: url('/src/sab-button.PNG');
     background-repeat: none;
     background-position: center;
     background-size: cover;
@@ -305,7 +305,7 @@ body {
 
 .detect-button {
     padding: 30px 30px 30px 30px;
-    background-image: url('src/investigate-button.PNG');
+    background-image: url('/src/investigate-button.PNG');
     background-repeat: none;
     background-position: center;
     background-size: cover;
