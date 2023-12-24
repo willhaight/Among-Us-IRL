@@ -700,9 +700,22 @@ function retrieveRole() {
     db.collection('among-us-data').doc('users').get().then(function (doc) {
         userList = doc.data().names
     })
+
 }
 db.collection('among-us-data').doc('activeGameRoleData').onSnapshot(function (doc) {
     retrieveRole()
+    if (!localStorage.getItem('vitals')) {
+        trueArr = []
+        for (i = 0; i < userList.length; i++) {
+            trueArr.push(true)
+            liveVitals.push([userList[i], trueArr[i]])
+            console.log('hiya', trueArr, liveVitals)
+        }
+        localStorage.setItem('vitals', 'exists')
+        db.collection('among-us-data').doc('globalGameData').update({
+            vitals: trueArr
+        })
+    }
 })
 
 //Role Revealing
