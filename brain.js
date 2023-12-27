@@ -607,10 +607,12 @@ function retrieveRole() {
             })
         }
         try {
+            document.getElementsByClassName('partner-revealer')[0].innerHTML = ""
+            document.getElementsByClassName('partner-revealer')[1].innerHTML = ""
             for (i = 0; i < roleAssignedList.length; i++) {
                 if (roleAssignedList[i].crewmate == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
-                    document.getElementsByClassName("role")[0].innerText = `Crewmate`
+                    document.getElementsByClassName("role")[0].innerText = ``
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
@@ -619,16 +621,20 @@ function retrieveRole() {
                 }
                 else if (roleAssignedList[i].sniper == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
-                    document.getElementsByClassName("role")[0].innerText = `Sniper`
+                    document.getElementsByClassName("role")[0].innerText = ``
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
+                    document.getElementsByClassName('partner-revealer')[0].innerHTML
+                        += `<p>${roleAssignedList[i].sniper}</p>`
+                    document.getElementsByClassName('partner-revealer')[1].innerHTML
+                        += `<p>${roleAssignedList[i].sniper}</p>`
                     myAssignedRole = "sniper"
                     cooldownAll()
                 }
                 else if (roleAssignedList[i].detective == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
-                    document.getElementsByClassName("role")[0].innerText = `Detective`
+                    document.getElementsByClassName("role")[0].innerText = ``
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
@@ -637,16 +643,20 @@ function retrieveRole() {
                 }
                 else if (roleAssignedList[i].swapper == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
-                    document.getElementsByClassName("role")[0].innerText = `Assassin`
+                    document.getElementsByClassName("role")[0].innerText = ``
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
+                    document.getElementsByClassName('partner-revealer')[0].innerHTML
+                        += `<p>${roleAssignedList[i].swapper}</p>`
+                    document.getElementsByClassName('partner-revealer')[1].innerHTML
+                        += `<p>${roleAssignedList[i].swapper}</p>`
                     myAssignedRole = "assassin"
                     cooldownAll()
                 }
                 else if (roleAssignedList[i].doctor == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
-                    document.getElementsByClassName("role")[0].innerText = `Doctor`
+                    document.getElementsByClassName("role")[0].innerText = ``
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
@@ -655,7 +665,7 @@ function retrieveRole() {
                 }
                 else if (roleAssignedList[i].jester == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
-                    document.getElementsByClassName("role")[0].innerText = `Jester`
+                    document.getElementsByClassName("role")[0].innerText = ``
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
@@ -664,7 +674,7 @@ function retrieveRole() {
                 }
                 else if (roleAssignedList[i].engineer == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
-                    document.getElementsByClassName("role")[0].innerText = `Engineer`
+                    document.getElementsByClassName("role")[0].innerText = ``
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
@@ -1168,46 +1178,43 @@ function detectCooldown2() {
                     const element = document.getElementsByClassName('detect-list-data')[i];
                     if (element) {
                         element.onclick = (function (index) {
-                            let windowConfirm = window.confirm(`Are you sure you want to investigate ${userList[index]}`)
-                            if (windowConfirm) {
-                                return function () {
-                                    if (doc.data().nameRoles[index].sniper) {
-                                        alert(`${userList[index]}'s role is: Sniper`);
-                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                        detectTimer2()
-                                    }
-                                    if (doc.data().nameRoles[index].swapper) {
-                                        alert(`${userList[index]}'s role is: Assassin`);
-                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                        detectTimer2()
-                                    }
-                                    if (doc.data().nameRoles[index].jester) {
-                                        alert(`${userList[index]}'s role is: Jester`);
-                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                        detectTimer2()
-                                    }
-                                    if (doc.data().nameRoles[index].crewmate) {
-                                        alert(`${userList[index]}'s role is: Crewmate`);
-                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                        detectTimer2()
-                                    }
-                                    if (doc.data().nameRoles[index].detective) {
-                                        alert(`${userList[index]}'s role is: Detective`);
-                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                        detectTimer2()
-                                    }
-                                    if (doc.data().nameRoles[index].doctor) {
-                                        alert(`${userList[index]}'s role is: Doctor`);
-                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                        detectTimer2()
-                                    }
-                                    if (doc.data().nameRoles[index].engineer) {
-                                        alert(`${userList[index]}'s role is: Engineer`);
-                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                        detectTimer2()
-                                    }
-                                };
-                            }
+                            return function () {
+                                if (doc.data().nameRoles[index].sniper) {
+                                    alert(`${userList[index]}'s role is: Sniper`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                                if (doc.data().nameRoles[index].swapper) {
+                                    alert(`${userList[index]}'s role is: Assassin`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                                if (doc.data().nameRoles[index].jester) {
+                                    alert(`${userList[index]}'s role is: Jester`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                                if (doc.data().nameRoles[index].crewmate) {
+                                    alert(`${userList[index]}'s role is: Crewmate`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                                if (doc.data().nameRoles[index].detective) {
+                                    alert(`${userList[index]}'s role is: Detective`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                                if (doc.data().nameRoles[index].doctor) {
+                                    alert(`${userList[index]}'s role is: Doctor`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                                if (doc.data().nameRoles[index].engineer) {
+                                    alert(`${userList[index]}'s role is: Engineer`);
+                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                    detectTimer2()
+                                }
+                            };
                         })(i);
                     }
                 }
