@@ -563,7 +563,7 @@ function scrambleRoles() {
             }
             localStorage.setItem('vitals', 'exists')
             db.collection('among-us-data').doc('globalGameData').update({
-                vitals: trueArr
+                vitals: []
             })
 
         });
@@ -690,7 +690,7 @@ db.collection('among-us-data').doc('activeGameRoleData').onSnapshot(function (do
     }
     localStorage.setItem('vitals', 'exists')
     db.collection('among-us-data').doc('globalGameData').update({
-        vitals: trueArr
+        vitals: []
     })
 })
 
@@ -951,7 +951,14 @@ document.getElementsByClassName('die-button')[0].onclick = function () {
             tempArr.push(liveVitals[i][1])
         }
         db.collection('among-us-data').doc('globalGameData').update({
-            vitals: tempArr
+            vitals: []
+        })
+        db.collection('among-us-data').doc('deadList').get().then(function (doc) {
+            let updatedDeadList = doc.data().deadList
+            updatedDeadList.push(myUser)
+            db.collection('among-us-data').doc('deadList').update({
+                deadList: updatedDeadList
+            })
         })
     } else {
 
@@ -1255,7 +1262,14 @@ function snipeButton() {
                                 let newList = doc.data().vitals
                                 newList[i] = false
                                 db.collection('among-us-data').doc('globalGameData').update({
-                                    vitals: newList
+                                    vitals: []
+                                })
+                                db.collection('among-us-data').doc('deadList').get().then(function (doc) {
+                                    let updatedDeadList = doc.data().deadList
+                                    updatedDeadList.push(userList[i])
+                                    db.collection('among-us-data').doc('deadList').update({
+                                        deadList: updatedDeadList
+                                    })
                                 })
                                 snipeCooldown()
                             }
