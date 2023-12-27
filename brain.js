@@ -500,6 +500,9 @@ document.getElementById('startGame').onclick = function () {
                 crewmates: gameRoleSetting[10].players - (gameRoleSetting[1].swappers + gameRoleSetting[0].snipers),
                 imposters: gameRoleSetting[1].swappers + gameRoleSetting[0].snipers
             })
+            db.collection('among-us-data').doc('deadList').update({
+                deadList: []
+            })
         } else {
             document.getElementById('gameSettingErrorField').innerHTML = "<p>Numbers dont match</p>"
         }
@@ -966,6 +969,17 @@ document.getElementsByClassName('die-button')[0].onclick = function () {
 
 }
 //updating vitals
+
+db.collection('among-us-data').doc('deadList').onSnapshot(function (doc) {
+    document.getElementsByClassName('vital-tracker').innerHTML = ""
+    for (i = 0; i < doc.data().deadList.length; i++) {
+        document.getElementsByClassName('vital-tracker').innerHTML +=
+            `<p>${doc.data().deadList[i]} is Dead!</p>`
+        if (myUser == doc.data().deadList[i]) {
+            goDieScreen()
+        }
+    }
+})
 
 // live task tracking
 db.collection('among-us-data').doc('globalGameData').onSnapshot(function (doc) {
