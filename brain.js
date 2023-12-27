@@ -1252,7 +1252,7 @@ function snipeButton() {
                 document.getElementsByClassName('snipe-tracker')[0].innerHTML +=
                     `<p class='snipe-list-data'>${userList[i]}</p>`
             }
-            for (let i = 0; i < doc.data().vitals.length; i++) {
+            for (let i = 0; i < userList.length; i++) {
                 const element = document.getElementsByClassName('snipe-list-data')[i];
                 if (element) {
                     element.onclick = (function (index) {
