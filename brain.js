@@ -971,7 +971,7 @@ document.getElementsByClassName('die-button')[0].onclick = function () {
 //updating vitals
 
 db.collection('among-us-data').doc('deadList').onSnapshot(function (doc) {
-    document.getElementsByClassName('vital-tracker').innerHTML = ""
+    document.getElementsByClassName('vital-tracker')[0].innerHTML = ""
     for (i = 0; i < doc.data().deadList.length; i++) {
         document.getElementsByClassName('vital-tracker').innerHTML +=
             `<p>${doc.data().deadList[i]} is Dead!</p>`
