@@ -610,6 +610,20 @@ function retrieveRole() {
             document.getElementsByClassName('partner-revealer')[0].innerHTML = ""
             document.getElementsByClassName('partner-revealer')[1].innerHTML = ""
             for (i = 0; i < roleAssignedList.length; i++) {
+                if (roleAssignedList[i].sniper) {
+                    document.getElementsByClassName('partner-revealer')[0].innerHTML
+                        += `<p>${roleAssignedList[i].sniper}</p>`
+                    document.getElementsByClassName('partner-revealer')[1].innerHTML
+                        += `<p>${roleAssignedList[i].sniper}</p>`
+                    myAssignedRole = "sniper"
+                }
+                if (roleAssignedList[i].swapper) {
+                    document.getElementsByClassName('partner-revealer')[0].innerHTML
+                        += `<p>${roleAssignedList[i].swapper}</p>`
+                    document.getElementsByClassName('partner-revealer')[1].innerHTML
+                        += `<p>${roleAssignedList[i].swapper}</p>`
+                    myAssignedRole = "sniper"
+                }
                 if (roleAssignedList[i].crewmate == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
                     document.getElementsByClassName("role")[0].innerText = ``
@@ -625,11 +639,6 @@ function retrieveRole() {
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
-                    document.getElementsByClassName('partner-revealer')[0].innerHTML
-                        += `<p>${roleAssignedList[i].sniper}</p>`
-                    document.getElementsByClassName('partner-revealer')[1].innerHTML
-                        += `<p>${roleAssignedList[i].sniper}</p>`
-                    myAssignedRole = "sniper"
                     cooldownAll()
                 }
                 else if (roleAssignedList[i].detective == myUser) {
@@ -647,11 +656,6 @@ function retrieveRole() {
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
-                    document.getElementsByClassName('partner-revealer')[0].innerHTML
-                        += `<p>${roleAssignedList[i].swapper}</p>`
-                    document.getElementsByClassName('partner-revealer')[1].innerHTML
-                        += `<p>${roleAssignedList[i].swapper}</p>`
-                    myAssignedRole = "assassin"
                     cooldownAll()
                 }
                 else if (roleAssignedList[i].doctor == myUser) {
