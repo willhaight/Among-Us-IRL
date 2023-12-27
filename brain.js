@@ -966,36 +966,7 @@ document.getElementsByClassName('die-button')[0].onclick = function () {
 
 }
 //updating vitals
-db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
-    db.collection('among-us-data').doc('users').get().then(function (doc2) {
-        for (i = 0; i < doc.data().vitals.length; i++) {
-            liveVitals.push([doc2.data().names[i], doc.data().vitals[i]])
-        }
-    })
-}).then(function () {
-    db.collection('among-us-data').doc('globalGameData').onSnapshot(function (doc) {
-        if (doc.data().taskTotal == ((gameRoleSetting[10].players - gameRoleSetting[0].snipers -
-            gameRoleSetting[1].swappers) * gameRoleSetting[3].tasks) - 1) {
-            sab1Cooldown()
-            sab2Cooldown()
-        }
-        document.getElementsByClassName('vital-tracker')[0].innerHTML = ''
-        for (i = 0; i < doc.data().vitals.length; i++) {
-            liveVitals[i][1] = doc.data().vitals[i]
-            if (liveVitals[i][1] == true) {
-                document.getElementsByClassName('vital-tracker')[0].innerHTML +=
-                    `<p>${liveVitals[i][0]}: alive</p>`
-            }
-            if (liveVitals[i][1] == false) {
-                document.getElementsByClassName('vital-tracker')[0].innerHTML +=
-                    `<p>${liveVitals[i][0]}: dead</p>`
-            }
-            if (liveVitals[i][1] == false && liveVitals[i][0] == myUser) {
-                goDieScreen()
-            }
-        }
-    })
-})
+
 // live task tracking
 db.collection('among-us-data').doc('globalGameData').onSnapshot(function (doc) {
     document.getElementsByClassName('task-tracker')[0].innerHTML =
@@ -1247,38 +1218,31 @@ document.getElementsByClassName('detect-button')[0].onclick = function () {
 function snipeButton() {
     if (snipeCooldownTrigger == false) {
         document.getElementsByClassName('snipe-tracker')[0].innerHTML = ""
-        db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
-            for (i = 0; i < userList.length; i++) {
-                document.getElementsByClassName('snipe-tracker')[0].innerHTML +=
-                    `<p class='snipe-list-data'>${userList[i]}</p>`
-            }
-            for (let i = 0; i < userList.length; i++) {
-                const element = document.getElementsByClassName('snipe-list-data')[i];
-                if (element) {
-                    element.onclick = (function (index) {
-                        return function () {
-                            let killConfirmed = window.confirm(`Are you sure you want to kill ${userList[i]}`)
-                            if (killConfirmed) {
-                                let newList = doc.data().vitals
-                                newList[i] = false
-                                db.collection('among-us-data').doc('globalGameData').update({
-                                    vitals: []
+        for (i = 0; i < userList.length; i++) {
+            document.getElementsByClassName('snipe-tracker')[0].innerHTML +=
+                `<p class='snipe-list-data'>${userList[i]}</p>`
+        }
+        for (let i = 0; i < userList.length; i++) {
+            const element = document.getElementsByClassName('snipe-list-data')[i];
+            if (element) {
+                element.onclick = (function (index) {
+                    return function () {
+                        let killConfirmed = window.confirm(`Are you sure you want to kill ${userList[i]}`)
+                        if (killConfirmed) {
+                            db.collection('among-us-data').doc('deadList').get().then(function (doc) {
+                                let updatedDeadList = doc.data().deadList
+                                updatedDeadList.push(userList[i])
+                                db.collection('among-us-data').doc('deadList').update({
+                                    deadList: updatedDeadList
                                 })
-                                db.collection('among-us-data').doc('deadList').get().then(function (doc) {
-                                    let updatedDeadList = doc.data().deadList
-                                    updatedDeadList.push(userList[i])
-                                    db.collection('among-us-data').doc('deadList').update({
-                                        deadList: updatedDeadList
-                                    })
-                                })
-                                snipeCooldown()
-                            }
-                            document.getElementsByClassName('snipe-tracker')[0].innerHTML = ""
-                        };
-                    })(i);
-                }
+                            })
+                            snipeCooldown()
+                        }
+                        document.getElementsByClassName('snipe-tracker')[0].innerHTML = ""
+                    };
+                })(i);
             }
-        })
+        }
     }
 }
 
