@@ -607,8 +607,8 @@ function retrieveRole() {
             })
         }
         try {
-            document.getElementsByClassName('partner-revealer')[0].innerHTML = ""
-            document.getElementsByClassName('partner-revealer')[1].innerHTML = ""
+            document.getElementsByClassName('partner-revealer')[0].innerHTML = "<h4>Imposters</h4>"
+            document.getElementsByClassName('partner-revealer')[1].innerHTML = "<h4>Imposters</h4>"
             for (i = 0; i < roleAssignedList.length; i++) {
                 if (roleAssignedList[i].sniper) {
                     document.getElementsByClassName('partner-revealer')[0].innerHTML

@@ -449,3 +449,10 @@ body {
     flex-direction: column;
     align-items: center;
 }
+
+.partner-revealer {
+    height: auto;
+    border: none;
+    border-radius: 0;
+    flex-direction: column;
+}
