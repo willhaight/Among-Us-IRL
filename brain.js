@@ -612,16 +612,16 @@ function retrieveRole() {
             for (i = 0; i < roleAssignedList.length; i++) {
                 if (roleAssignedList[i].sniper) {
                     document.getElementsByClassName('partner-revealer')[0].innerHTML
-                        += `<p>${roleAssignedList[i].sniper}</p>`
+                        += `<p>${roleAssignedList[i].sniper}</p><br>`
                     document.getElementsByClassName('partner-revealer')[1].innerHTML
-                        += `<p>${roleAssignedList[i].sniper}</p>`
+                        += `<p>${roleAssignedList[i].sniper}</p><br>`
                     myAssignedRole = "sniper"
                 }
                 if (roleAssignedList[i].swapper) {
                     document.getElementsByClassName('partner-revealer')[0].innerHTML
-                        += `<p>${roleAssignedList[i].swapper}</p>`
+                        += `<p>${roleAssignedList[i].swapper}</p><br>`
                     document.getElementsByClassName('partner-revealer')[1].innerHTML
-                        += `<p>${roleAssignedList[i].swapper}</p>`
+                        += `<p>${roleAssignedList[i].swapper}</p><br>`
                     myAssignedRole = "sniper"
                 }
                 if (roleAssignedList[i].crewmate == myUser) {
