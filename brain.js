@@ -17,7 +17,7 @@ const db = firebase.firestore();
 function addCollection(collName, data) {
     db.collection(collName).add(data)
         .then(function (docRef) {
-            console.log("Document written with ID: ", docRef.id);
+
         })
         .catch(function (error) {
             console.error("Error adding document: ", error);
@@ -58,7 +58,6 @@ function loadUsers() {
     db.collection("among-us-data").doc('users').get()
         .then(function (doc) {
             if (doc.exists) {
-                console.log('Document data:', doc.data());
                 let counter = 0;
                 document.getElementById('nameList').innerHTML = ''
                 doc.data().names.forEach(function (name) {
@@ -78,11 +77,11 @@ function loadUsers() {
                     counter++;
                 });
             } else {
-                console.log("No such document!");
+                console.error("No such document!");
             }
         })
         .catch(function (error) {
-            console.log("Error getting document:", error);
+            console.error("Error getting document:", error);
         });
 }
 
@@ -99,12 +98,10 @@ function addUser(newName) {
 }
 
 function leaveLobby(user) {
-    console.log(user)
     db.collection("among-us-data").doc("users").update({
         names: firebase.firestore.FieldValue.arrayRemove(user)
     })
         .then(function () {
-            console.log("Document successfully updated!");
             document.getElementById('nameList').innerHTML = ""
             document.getElementById("createfield").style.display = "none"
             document.getElementById('home-field').style.display = "flex"
@@ -151,7 +148,22 @@ let forgotPass = document.getElementById('forgotPass')
 let errorField = document.getElementById('error-field')
 
 
-
+document.getElementById("leaveLobby2").onclick = function () {
+    let winConfrim = window.confirm('are you sure you want to RESET the game?')
+    if (winConfrim) {
+        db.collection("among-us-data").doc('activeGameRoleData').update({
+            nameRoles: ''
+        })
+            .then(() => {
+                // Code to execute after the update operation is completed
+                location.reload()
+            })
+            .catch((error) => {
+                // Handle errors if the update operation fails
+                console.error("Error updating document:", error);
+            });
+    }
+}
 
 newAccSub.onclick = function () {
     if (newPass1.value === newPass2.value & newEmail.value.includes('@')
@@ -159,8 +171,6 @@ newAccSub.onclick = function () {
         firebase.auth().createUserWithEmailAndPassword(newEmail.value, newPass1.value)
             .then((userCredential) => {
                 // New user created successfully
-                const user = userCredential.user;
-                console.log('User created:', user);
                 document.getElementById('sign-up-controls').style.display = "none"
                 document.getElementById('home-controls').style.display = "flex"
                 firebase.auth().onAuthStateChanged(function (user) {
@@ -168,7 +178,6 @@ newAccSub.onclick = function () {
                         displayName: newDisplayName.value
                     }).then(() => {
                         // Update successful
-                        console.log("User created with display name: " + user.displayName);
                         document.getElementById('userName').innerText = `${user.displayName}`
                         location.reload()
                     }).catch((error) => {
@@ -206,7 +215,6 @@ firebase.auth().onAuthStateChanged(function (user) {
         signIn(user);
     } else {
         // No user is signed in
-        console.log('No user signed in.');
         document.getElementById('loginButt').style.display = 'flex'
         document.getElementById('playButt').style.display = 'none'
     }
@@ -231,7 +239,6 @@ document.getElementById('userName2').onclick = function () {
     document.getElementById('home-field').style.display = "flex"
     document.getElementById('createfield').style.display = "none"
     leaveLobby(myUser)
-    console.log(myUser)
     myUser = ""
 }
 
@@ -240,8 +247,6 @@ logSub.onclick = function () {
     firebase.auth().signInWithEmailAndPassword(email.value, password.value)
         .then((userCredential) => {
             // Signed in successfully
-            const user = userCredential.user;
-            console.log("User logged in:", user);
 
             // Perform actions after successful login, such as redirecting to a new page or displaying a welcome message.
         })
@@ -289,19 +294,6 @@ document.getElementById('deleteLobby').onclick = function () {
     })
 }
 
-// document.getElementById("leaveLobby2").onclick = function () {
-//     db.collection("among-us-data").doc('activeGameRoleData').update({
-//         nameRoles: ''
-//     })
-//         .then(() => {
-//             // Code to execute after the update operation is completed
-//             location.reload()
-//         })
-//         .catch((error) => {
-//             // Handle errors if the update operation fails
-//             console.error("Error updating document:", error);
-//         });
-// }
 let listedUsers = []
 db.collection('among-us-data').doc('users').get().then(function (doc) {
     listedUsers = doc.data().names
@@ -524,19 +516,6 @@ let userList = []
 let roleCirculation = []
 let liveVitals = []
 
-// let gameRoleSetting = [
-//    0 { snipers: 0 },
-//    1 { swappers: 0 },
-//    2 { killCooldown: 0 },
-//    3 { tasks: 0 },
-//    4 { detectives: 0 },
-//    5 { detectiveChecks: 0 },
-//    6 { priests: 0 },
-//    7 { priestChecks: 0 },
-//    8 { engineers: 0 },
-//    9 { jesters: 0 },
-//    10 { players: 0 }
-// ]
 function scrambleRoles() {
     db.collection('among-us-data').doc('users').get()
         .then(function (doc) {
@@ -574,7 +553,6 @@ function scrambleRoles() {
                 playerRole[randomRole] = playerName;
                 playerRoles.push(playerRole);
             }
-            console.log(playerRoles);
             db.collection("among-us-data").doc('activeGameRoleData').update({
                 nameRoles: playerRoles
             });
@@ -709,7 +687,6 @@ db.collection('among-us-data').doc('activeGameRoleData').onSnapshot(function (do
     for (i = 0; i < userList.length; i++) {
         trueArr.push(true)
         liveVitals.push([userList[i], trueArr[i]])
-        console.log('hiya', trueArr, liveVitals)
     }
     localStorage.setItem('vitals', 'exists')
     db.collection('among-us-data').doc('globalGameData').update({
@@ -782,12 +759,10 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
             document.getElementsByClassName("doctor-controls")[0].style.display = "flex"
             document.getElementsByClassName('task-status')[0].style.display = "flex"
             document.getElementsByClassName('vital-tracker')[0].style.display = "flex"
-            console.log('flex it')
         } else {
             document.getElementsByClassName("doctor-controls")[0].style.display = "none"
             document.getElementsByClassName('task-status')[0].style.display = "none"
             document.getElementsByClassName('vital-tracker')[0].style.display = 'none'
-            console.log('flex not')
         }
     }
     else if (myAssignedRole == "jester") {
@@ -838,7 +813,6 @@ document.getElementsByClassName('role-button')[0].onclick = function () {
                 distributeTaskCount[rand] += 1
             }
             for (let i = 0; i < document.getElementsByClassName('task-spec').length; i++) {
-                console.log(document.getElementsByClassName('task-spec')[i].innerText)
                 document.getElementsByClassName('task-spec')[i].innerText += ` ${distributeTaskCount[i]}`
             }
             localStorage.setItem('Tasks', document.getElementsByClassName('task-status')[0].innerHTML)
@@ -982,22 +956,7 @@ document.getElementsByClassName('die-button')[0].onclick = function () {
     } else {
 
     }
-    // if (myAssignedRole == "crewmate" || myAssignedRole == "doctor"
-    //     || myAssignedRole == "engineer" || myAssignedRole == "detective"
-    //     || myAssignedRole == 'jester') {
-    //     db.collection('among-us-data').doc('liveRoleCounts').get().then(function (doc) {
-    //         db.collection('among-us-data').doc('liveRoleCounts').update({
-    //             crewmates: doc.data().crewmates - 1
-    //         })
-    //     })
-    // }
-    // if (myAssignedRole == "sniper" || myAssignedRole == "assassin") {
-    //     db.collection('among-us-data').doc('liveRoleCounts').get().then(function (doc) {
-    //         db.collection('among-us-data').doc('liveRoleCounts').update({
-    //             imposters: doc.data().imposters - 1
-    //         })
-    //     })
-    // }
+
 }
 //updating vitals
 db.collection('among-us-data').doc('globalGameData').get().then(function (doc) {
@@ -1295,7 +1254,6 @@ function snipeButton() {
                             if (killConfirmed) {
                                 let newList = doc.data().vitals
                                 newList[i] = false
-                                console.log(newList)
                                 db.collection('among-us-data').doc('globalGameData').update({
                                     vitals: newList
                                 })
@@ -1673,7 +1631,6 @@ document.getElementsByClassName('jester-win-button')[0].onclick = function () {
 //detecting Sabotages
 
 db.collection('among-us-data').doc('sabotage').onSnapshot(function (doc) {
-    console.log('snapped', doc.data().statusOne)
     db.collection('among-us-data').doc('sabotage').get().then(function (doc2) {
         if (doc.data().statusOne == true && myAssignedRole != 'assassin' && myAssignedRole != 'sniper') {
             clearInGameField()
