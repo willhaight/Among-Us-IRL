@@ -637,6 +637,7 @@ function retrieveRole() {
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
+                    myAssignedRole = "sniper"
                     cooldownAll()
                 }
                 else if (roleAssignedList[i].detective == myUser) {
@@ -654,6 +655,7 @@ function retrieveRole() {
                     document.getElementById('gameSettingErrorField').innerHTML = ""
                     document.getElementById('createfield').style.display = "none"
                     document.getElementById('inGameField').style.display = "flex"
+                    myAssignedRole = "assassin"
                     cooldownAll()
                 }
                 else if (roleAssignedList[i].doctor == myUser) {
