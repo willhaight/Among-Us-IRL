@@ -1168,43 +1168,46 @@ function detectCooldown2() {
                     const element = document.getElementsByClassName('detect-list-data')[i];
                     if (element) {
                         element.onclick = (function (index) {
-                            return function () {
-                                if (doc.data().nameRoles[index].sniper) {
-                                    alert(`${userList[index]}'s role is: Sniper`);
-                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                    detectTimer2()
-                                }
-                                if (doc.data().nameRoles[index].swapper) {
-                                    alert(`${userList[index]}'s role is: Assassin`);
-                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                    detectTimer2()
-                                }
-                                if (doc.data().nameRoles[index].jester) {
-                                    alert(`${userList[index]}'s role is: Jester`);
-                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                    detectTimer2()
-                                }
-                                if (doc.data().nameRoles[index].crewmate) {
-                                    alert(`${userList[index]}'s role is: Crewmate`);
-                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                    detectTimer2()
-                                }
-                                if (doc.data().nameRoles[index].detective) {
-                                    alert(`${userList[index]}'s role is: Detective`);
-                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                    detectTimer2()
-                                }
-                                if (doc.data().nameRoles[index].doctor) {
-                                    alert(`${userList[index]}'s role is: Doctor`);
-                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                    detectTimer2()
-                                }
-                                if (doc.data().nameRoles[index].engineer) {
-                                    alert(`${userList[index]}'s role is: Engineer`);
-                                    document.getElementsByClassName('detect-tracker')[0].style.display = "none"
-                                    detectTimer2()
-                                }
-                            };
+                            let windowConfirm = window.confirm(`Are you sure you want to investigate ${userList[index]}`)
+                            if (windowConfirm) {
+                                return function () {
+                                    if (doc.data().nameRoles[index].sniper) {
+                                        alert(`${userList[index]}'s role is: Sniper`);
+                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                        detectTimer2()
+                                    }
+                                    if (doc.data().nameRoles[index].swapper) {
+                                        alert(`${userList[index]}'s role is: Assassin`);
+                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                        detectTimer2()
+                                    }
+                                    if (doc.data().nameRoles[index].jester) {
+                                        alert(`${userList[index]}'s role is: Jester`);
+                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                        detectTimer2()
+                                    }
+                                    if (doc.data().nameRoles[index].crewmate) {
+                                        alert(`${userList[index]}'s role is: Crewmate`);
+                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                        detectTimer2()
+                                    }
+                                    if (doc.data().nameRoles[index].detective) {
+                                        alert(`${userList[index]}'s role is: Detective`);
+                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                        detectTimer2()
+                                    }
+                                    if (doc.data().nameRoles[index].doctor) {
+                                        alert(`${userList[index]}'s role is: Doctor`);
+                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                        detectTimer2()
+                                    }
+                                    if (doc.data().nameRoles[index].engineer) {
+                                        alert(`${userList[index]}'s role is: Engineer`);
+                                        document.getElementsByClassName('detect-tracker')[0].style.display = "none"
+                                        detectTimer2()
+                                    }
+                                };
+                            }
                         })(i);
                     }
                 }
