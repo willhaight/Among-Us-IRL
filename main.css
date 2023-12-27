@@ -456,3 +456,10 @@ body {
     border-radius: 0;
     flex-direction: column;
 }
+
+.assassin-controls .partner-revealer {
+    height: auto;
+    border: none;
+    border-radius: 0;
+    flex-direction: column;
+}
