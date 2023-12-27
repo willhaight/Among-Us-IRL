@@ -615,14 +615,12 @@ function retrieveRole() {
                         += `<p>${roleAssignedList[i].sniper}</p>`
                     document.getElementsByClassName('partner-revealer')[1].innerHTML
                         += `<p>${roleAssignedList[i].sniper}</p>`
-                    myAssignedRole = "sniper"
                 }
                 if (roleAssignedList[i].swapper) {
                     document.getElementsByClassName('partner-revealer')[0].innerHTML
                         += `<p>${roleAssignedList[i].swapper}</p>`
                     document.getElementsByClassName('partner-revealer')[1].innerHTML
                         += `<p>${roleAssignedList[i].swapper}</p>`
-                    myAssignedRole = "sniper"
                 }
                 if (roleAssignedList[i].crewmate == myUser) {
                     document.getElementsByClassName("name")[0].innerText = `${myUser}`
